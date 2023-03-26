@@ -3,11 +3,18 @@ uses CRT,POKEYMAXconf;
 var
   config:TConfig;
   PMVER:String[8];
+  keyb:byte absolute 764;
+
+procedure wait4key;
+begin
+  keyb:=255; repeat until keyb<>255; keyb:=255;
+end;
 
 begin
   if not detectPOKEYMax then
   begin
     writeLn('Sorry, POKEYMax not found ;(');
+    wait4key;
     halt;
   end;
   PMVER:=GetVersion;
@@ -79,4 +86,6 @@ begin
     writeLn('4xCOVOX support');
   if config.capability and pmc_SAMPLE<>0 then
     writeLn('DMA sample support');
+
+  wait4Key;
 end.

@@ -1,0 +1,1242 @@
+mads 2.1.6
+    84 					opt l+
+   119
+   120 				.print 'ZPAGE: ',zpage,'..',zpend-1
+   120 				ZPAGE: $0080..$00D3
+   121
+   122 				.print 'RTLIB: ',RTLIB,'..',*-1
+   122 				RTLIB: $21FF..$22DE
+   123
+   124 				; ------------------------------------------------------------
+   125
+   126 22DF			START
+   127 22DF BA				tsx
+   128 22E0 8E E6 25			stx MAIN.@halt+1
+   129
+   130 = 002D			VLEN	= VARDATASIZE-VARINITSIZE
+   131 = 260A			VADR	= DATAORIGIN+VARINITSIZE
+   132
+   133 					ift VADR > $BFFF
+   134 					ert 'Invalid memory address range ',VADR
+   135 					eli (VLEN>0) && (VLEN<=256)
+   136 22E3 A2 D3			ldx #256-VLEN
+   137 22E5 A9 00			lda #$00
+   138 22E7 9D 37 25 E8 D0 FA		sta:rne VADR+VLEN-256,x+
+   139 					eli VLEN>256
+   140 					@fill #VADR #VLEN #$00
+   141 					eif
+   142
+   143 				.ifdef :psptr
+   144 					mwa #PROGRAMSTACK :psptr
+   145 				.fi
+   146
+   147 					.ifdef MAIN.@DEFINES.ROMOFF
+   148 					icl 'atari\romoff.asm'
+   149 					.fi
+   150
+   151 22ED A2 0F			ldx #$0F					; DOS II+/D ParamStr
+   152 22EF BD 40 03 9D EB 25 + 	mva:rpl $340,x MAIN.IOCB@COPY,x-
+   153
+   154 22F8 E8				inx						; X = 0
+   155 22F9 86 80			stx bp						; BP = 0
+   156
+   157 22FB 8E 08 D2			stx audctl					; reset POKEY
+   158 22FE 8E 18 D2			stx audctl+$10
+   159 2301 A9 03			lda #3
+   160 2303 8D 0F D2			sta skctl
+   161 2306 8D 1F D2			sta skctl+$10
+   162
+   163 2309 CA				dex						; X = 255
+   164
+   165 230A				UNITINITIALIZATION
+Macro: UNITINITIALIZATION [Source: pokeymaxtest.a65]
+   166
+   167 230A			.local	MAIN						; PROCEDURE
+   168
+   169 230A 4C 95 23			jmp l_0206
+   170
+   171 				; ------------------------------------------------------------
+   172
+   173 230D			.local	SYSTEM						; UNIT
+   174
+   175 230D			.local	MOVE_0242					; PROCEDURE | ASSEMBLER | OVERLOAD | REGISTER | INLINE
+   176
+   177 					.MACRO m@INLINE
+   178 				
+   179 				; -------------------  ASM Block 00000027  -------------------
+   180 				
+   181 					jsr @move
+   182 				
+   183 					.ENDM
+   184
+   185 				; ------------------------------------------------------------
+   186
+   187 = 0088			SOURCE	= :EDX
+   188 = 008C			DEST	= :ECX
+   189 = 0084			COUNT	= :EAX
+   190 230D			@exit
+   191 				.endl
+   192
+   193 				; ------------------------------------------------------------
+   194
+   195 = 0101			__PORTB_BANKS	= $0101
+   196 = 0648			M_PI_2	= $0648
+   197 = 0192			D_PI_2	= $0192
+   198 = 0004			D_PI_180	= $04
+   199 = 0000			MGTIA	= $00
+   200 = 0080			MVBXE	= $80
+   201 = 0000			VBXE_XDLADR	= $00
+   202 = 00E0			VBXE_BCBTMP	= $E0
+   203 = 0100			VBXE_BCBADR	= $0100
+   204 = 1000			VBXE_MAPADR	= $1000
+   205 = 1000			VBXE_CHBASE	= $1000
+   206 = 5000			VBXE_OVRADR	= $5000
+   207 = B000			VBXE_WINDOW	= $B000
+   208 = 0000			IDLI	= $00
+   209 = 0001			IVBL	= $01
+   210 = 0002			ITIM1	= $02
+   211 = 0003			ITIM2	= $03
+   212 = 0004			ITIM4	= $04
+   213 = 00FE			CH_DELCHR	= $FE
+   214 = 009B			CH_ENTER	= $9B
+   215 = 001B			CH_ESC	= $1B
+   216 = 001C			CH_CURS_UP	= $1C
+   217 = 001D			CH_CURS_DOWN	= $1D
+   218 = 001E			CH_CURS_LEFT	= $1E
+   219 = 001F			CH_CURS_RIGHT	= $1F
+   220 = 007F			CH_TAB	= $7F
+   221 = 009B			CH_EOL	= $9B
+   222 = 007D			CH_CLR	= $7D
+   223 = 00FD			CH_BELL	= $FD
+   224 = 007E			CH_DEL	= $7E
+   225 = 009C			CH_DELLINE	= $9C
+   226 = 009D			CH_INSLINE	= $9D
+   227 = 0000			PAL_PMCOLOR0	= $00
+   228 = 0001			PAL_PMCOLOR1	= $01
+   229 = 0002			PAL_PMCOLOR2	= $02
+   230 = 0003			PAL_PMCOLOR3	= $03
+   231 = 0004			PAL_COLOR0	= $04
+   232 = 0005			PAL_COLOR1	= $05
+   233 = 0006			PAL_COLOR2	= $06
+   234 = 0007			PAL_COLOR3	= $07
+   235 = 0008			PAL_COLBAK	= $08
+   236 = 0000			COLOR_BLACK	= $00
+   237 = 000E			COLOR_WHITE	= $0E
+   238 = 0032			COLOR_RED	= $32
+   239 = 0096			COLOR_CYAN	= $96
+   240 = 0068			COLOR_VIOLET	= $68
+   241 = 00C4			COLOR_GREEN	= $C4
+   242 = 0074			COLOR_BLUE	= $74
+   243 = 00EE			COLOR_YELLOW	= $EE
+   244 = 0028			COLOR_ORANGE	= $28
+   245 = 00E4			COLOR_BROWN	= $E4
+   246 = 003C			COLOR_LIGHTRED	= $3C
+   247 = 0004			COLOR_GRAY1	= $04
+   248 = 0006			COLOR_GRAY2	= $06
+   249 = 000A			COLOR_GRAY3	= $0A
+   250 = 00CC			COLOR_LIGHTGREEN	= $CC
+   251 = 007C			COLOR_LIGHTBLUE	= $7C
+   252 = 0004			FMOPENREAD	= $04
+   253 = 0008			FMOPENWRITE	= $08
+   254 = 0009			FMOPENAPPEND	= $09
+   255 = 000C			FMOPENREADWRITE	= $0C
+   256 = 2604			SCREENWIDTH	= DATAORIGIN+$0000
+   257 = 2606			SCREENHEIGHT	= DATAORIGIN+$0002
+   258 = 2608			DATESEPARATOR	= DATAORIGIN+$0004
+   259 = D20A			RND	= $D20A
+   260 = 02C0			adr.PALETTE	= $02C0
+   261 230D			.var PALETTE	= adr.PALETTE .word
+   262 = D012			adr.HPALETTE	= $D012
+   263 230D			.var HPALETTE	= adr.HPALETTE .word
+   264 = 2609			FILEMODE	= DATAORIGIN+$0005
+   265 = 260A			GRAPHMODE	= DATAORIGIN+$0006
+   266 = 260B			IORESULT	= DATAORIGIN+$0007
+   267 = 260C			EOLN	= DATAORIGIN+$0008
+   268 = 260D			RNDSEED	= DATAORIGIN+$0009
+   269
+   270 = 230D C0 02		PALETTE
+   270 = 230F 12 D0		HPALETTE
+   270 				.endl							; UNIT SYSTEM
+   271
+   272 				; ------------------------------------------------------------
+   273
+   274 2311			.local	ATARI						; UNIT
+   275
+   276 				; ------------------------------------------------------------
+   277
+   278 = 0010			IRQENS	= $10
+   279 = 0012			RTCLOK	= $12
+   280 = 0012			RTCLOK1	= $12
+   281 = 0013			RTCLOK2	= $13
+   282 = 0014			RTCLOK3	= $14
+   283 = 004D			ATRACT	= $4D
+   284 = 0052			LMARGIN	= $52
+   285 = 0053			RMARGIN	= $53
+   286 = 0054			ROWCRS	= $54
+   287 = 0055			COLCRS	= $55
+   288 = 0057			DINDEX	= $57
+   289 = 0058			SAVMSC	= $58
+   290 = 0062			PALNTS	= $62
+   291 = 006A			RAMTOP	= $6A
+   292 = 0200			VDSLST	= $0200
+   293 = 0230			SDLSTL	= $0230
+   294 = 0290			TXTROW	= $0290
+   295 = 0291			TXTCOL	= $0291
+   296 = 0293			TINDEX	= $0293
+   297 = 0294			TXTMSC	= $0294
+   298 = 022F			SDMCTL	= $022F
+   299 = 026F			GPRIOR	= $026F
+   300 = 02F0			CRSINH	= $02F0
+   301 = 02F3			CHACT	= $02F3
+   302 = 02F4			CHBAS	= $02F4
+   303 = 02FC			CH	= $02FC
+   304 = 02FD			FILDAT	= $02FD
+   305 = 02C0			PCOLR0	= $02C0
+   306 = 02C1			PCOLR1	= $02C1
+   307 = 02C2			PCOLR2	= $02C2
+   308 = 02C3			PCOLR3	= $02C3
+   309 = 02C4			COLOR0	= $02C4
+   310 = 02C5			COLOR1	= $02C5
+   311 = 02C6			COLOR2	= $02C6
+   312 = 02C7			COLOR3	= $02C7
+   313 = 02C8			COLOR4	= $02C8
+   314 = 02C8			COLBAKS	= $02C8
+   315 = D000			HPOSP0	= $D000
+   316 = D001			HPOSP1	= $D001
+   317 = D002			HPOSP2	= $D002
+   318 = D003			HPOSP3	= $D003
+   319 = D004			HPOSM0	= $D004
+   320 = D005			HPOSM1	= $D005
+   321 = D006			HPOSM2	= $D006
+   322 = D007			HPOSM3	= $D007
+   323 = D008			SIZEP0	= $D008
+   324 = D009			SIZEP1	= $D009
+   325 = D00A			SIZEP2	= $D00A
+   326 = D00B			SIZEP3	= $D00B
+   327 = D00C			SIZEM	= $D00C
+   328 = D00D			GRAFP0	= $D00D
+   329 = D00E			GRAFP1	= $D00E
+   330 = D00F			GRAFP2	= $D00F
+   331 = D010			GRAFP3	= $D010
+   332 = D011			GRAFM	= $D011
+   333 = D004			P0PF	= $D004
+   334 = D014			PAL	= $D014
+   335 = D013			TRIG3	= $D013
+   336 = D012			COLPM0	= $D012
+   337 = D013			COLPM1	= $D013
+   338 = D014			COLPM2	= $D014
+   339 = D015			COLPM3	= $D015
+   340 = D016			COLPF0	= $D016
+   341 = D017			COLPF1	= $D017
+   342 = D018			COLPF2	= $D018
+   343 = D019			COLPF3	= $D019
+   344 = D01A			COLBK	= $D01A
+   345 = D01B			PRIOR	= $D01B
+   346 = D01D			GRACTL	= $D01D
+   347 = D01E			HITCLR	= $D01E
+   348 = D01F			CONSOL	= $D01F
+   349 = D200			AUDF1	= $D200
+   350 = D201			AUDC1	= $D201
+   351 = D202			AUDF2	= $D202
+   352 = D203			AUDC2	= $D203
+   353 = D204			AUDF3	= $D204
+   354 = D205			AUDC3	= $D205
+   355 = D206			AUDF4	= $D206
+   356 = D207			AUDC4	= $D207
+   357 = D208			AUDCTL	= $D208
+   358 = D209			KBCODE	= $D209
+   359 = D20E			IRQEN	= $D20E
+   360 = D20F			SKSTAT	= $D20F
+   361 = D300			PORTA	= $D300
+   362 = D301			PORTB	= $D301
+   363 = D302			PACTL	= $D302
+   364 = D400			DMACTL	= $D400
+   365 = D401			CHACTL	= $D401
+   366 = D402			DLISTL	= $D402
+   367 = D404			HSCROL	= $D404
+   368 = D405			VSCROL	= $D405
+   369 = D407			PMBASE	= $D407
+   370 = D409			CHBASE	= $D409
+   371 = D40A			WSYNC	= $D40A
+   372 = D40B			VCOUNT	= $D40B
+   373 = D40C			PENH	= $D40C
+   374 = D40D			PENV	= $D40D
+   375 = D40E			NMIEN	= $D40E
+   376 = FFFA			NMIVEC	= $FFFA
+   377 = FFFC			RESETVEC	= $FFFC
+   378 = FFFE			IRQVEC	= $FFFE
+   379
+   380 				.endl							; UNIT ATARI
+   381
+   382 				; ------------------------------------------------------------
+   383
+   384 2311			.local	CRT						; UNIT
+   385
+   386 				; ------------------------------------------------------------
+   387
+   388 = 260F			TEXTATTR	= DATAORIGIN+$000B
+   389 = D01F			CONSOL	= $D01F
+   390 = 0000			CN_START_SELECT_OPTION	= $00
+   391 = 0001			CN_SELECT_OPTION	= $01
+   392 = 0002			CN_START_OPTION	= $02
+   393 = 0003			CN_OPTION	= $03
+   394 = 0004			CN_START_SELECT	= $04
+   395 = 0005			CN_SELECT	= $05
+   396 = 0006			CN_START	= $06
+   397 = 0007			CN_NONE	= $07
+   398 = 0000			BW40	= $00
+   399 = 0001			CO40	= $01
+   400 = 0002			BW80	= $02
+   401 = 0003			CO80	= $03
+   402 = 0007			MONO	= $07
+   403 = 0001			C40	= $01
+   404 = 0003			C80	= $03
+   405 = 0000			BLACK	= $00
+   406 = 000F			WHITE	= $0F
+   407 = 0026			RED	= $26
+   408 = 00AC			CYAN	= $AC
+   409 = 0048			PURPLE	= $48
+   410 = 00B6			GREEN	= $B6
+   411 = 0086			BLUE	= $86
+   412 = 00DC			YELLOW	= $DC
+   413 = 0018			ORANGE	= $18
+   414 = 00F4			BROWN	= $F4
+   415 = 002A			LIGHT_RED	= $2A
+   416 = 0004			DARK_GREY	= $04
+   417 = 0008			GREY	= $08
+   418 = 00BC			LIGHT_GREEN	= $BC
+   419 = 009A			LIGHT_BLUE	= $9A
+   420 = 000C			LIGHT_GREY	= $0C
+   421 = 0080			BLINK	= $80
+   422
+   423 				.endl							; UNIT CRT
+   424
+   425 				; ------------------------------------------------------------
+   426
+   427 2311			.local	POKEYMAXCONF					; UNIT
+   428
+   429 2311			.local	DETECTPOKEYMAX					; FUNCTION
+   430
+   431 				; optimize OK (POKEYMAXCONF), line = 405
+   432
+   433 2311			?volatile:
+   434 2311 A0 01			ldy #1
+   435 2313 AD 0C D2			lda PMCID
+   436 2316 C9 01			cmp #$01
+   437 2318 F0 01			beq @+
+   438 231A 88				dey
+   439 				@
+   440 231B 98				tya
+   441 231C 8D 10 26			sta RESULT
+   442 231F			@exit
+   443
+   444 				; ------------------------------------------------------------
+   445
+   446 = 2610			RESULT	= DATAORIGIN+$000C
+   447 231F 60				rts						; ret
+   448 				.endl
+   449
+   450 2320			.local	GETVERSION					; FUNCTION
+   451
+   452 				; optimize OK (POKEYMAXCONF), line = 413
+   453
+   454 2320 A9 3F			lda #$3F
+   455 2322 8D 0C D2			sta PMCCONFIG
+   456
+   457 				; optimize OK (POKEYMAXCONF), line = 414
+   458
+   459 2325 AC 11 26 84 82 AC + 	mwy RESULT :bp2
+   460 232F A0 00			ldy #$00
+   461 2331 A9 08			lda #$08
+   462 2333 91 82			sta (:bp2),y
+   463
+   464 				; optimize OK (POKEYMAXCONF), line = 415
+   465
+   466 2335 A9 01			lda #$01
+   467 2337 8D 13 26			sta I
+   468
+   469 233A			l_029D
+   470 				; --- ForToDoCondition
+   471 233A AD 13 26			lda I
+   472 233D C9 09			cmp #$09
+   473 233F B0 1E			jcs l_02AB
+   474
+   475 				; optimize OK (POKEYMAXCONF), line = 417
+   476
+   477 2341 AC 13 26			ldy I
+   478 2344 88				dey
+   479 2345 8C 14 D2			sty PMCVERSIONLOC
+   480
+   481 				; optimize OK (POKEYMAXCONF), line = 418
+   482
+   483 2348			?volatile:
+   484 2348 AC 11 26 84 82 AC + 	mwy RESULT :bp2
+   485 2352 AC 13 26			ldy I
+   486 2355 AD 14 D2			lda PMCVERSION
+   487 2358 91 82			sta (:bp2),y
+   488
+   489 				; --- ForToDoEpilog
+   490 235A EE 13 26			inc I
+   491 235D D0 DB			jne l_029D
+   492 235F			l_02AB
+   493
+   494 				; optimize OK (POKEYMAXCONF), line = 420
+   495
+   496 235F A9 00			lda #$00
+   497 2361 8D 0C D2			sta PMCCONFIG
+   498 2364			@exit
+   499
+   500 				; ------------------------------------------------------------
+   501
+   502 = 2611			RESULT	= DATAORIGIN+$000D
+   503 = 2613			I	= DATAORIGIN+$000F
+   504
+   505 = 2613			@VarData	= I
+   506 = 0001			@VarDataSize	= 1
+   507
+   508 2364 60				rts						; ret
+   509 				.endl
+   510
+   511 2365			.local	FETCHCONFIGURATION				; PROCEDURE
+   512
+   513 				; optimize OK (POKEYMAXCONF), line = 425
+   514
+   515 2365 A9 3F			lda #$3F
+   516 2367 8D 0C D2			sta PMCCONFIG
+   517
+   518 				; optimize OK (POKEYMAXCONF), line = 426
+   519
+   520 236A AD 8F 23			lda LIFECONFIG
+   521 236D 85 88			sta SYSTEM.MOVE_0242.SOURCE
+   522 236F AD 90 23			lda LIFECONFIG+1
+   523 2372 85 89			sta SYSTEM.MOVE_0242.SOURCE+1
+   524 2374 AD 14 26			lda _CONFIG
+   525 2377 85 8C			sta SYSTEM.MOVE_0242.DEST
+   526 2379 AD 15 26			lda _CONFIG+1
+   527 237C 85 8D			sta SYSTEM.MOVE_0242.DEST+1
+   528 237E A9 0F			lda #$0F
+   529 2380 85 84			sta SYSTEM.MOVE_0242.COUNT
+   530 2382 A9 00			lda #$00
+   531 2384 85 85			sta SYSTEM.MOVE_0242.COUNT+1
+   532 2386				.local +MAIN.SYSTEM.MOVE_0242
+   533 2386				m@INLINE
+Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
+     4 2386 20 3D 22			jsr @move
+   534 					.endl
+   535
+   536 				; optimize OK (POKEYMAXCONF), line = 427
+   537
+   538 2389 A9 00			lda #$00
+   539 238B 8D 0C D2			sta PMCCONFIG
+   540
+   541 				; ------------------------------------------------------------
+   542
+   543 = 2614			_CONFIG	= DATAORIGIN+$0010
+   544 = 2604			_CONFIG.MODE	= DATAORIGIN+$0000
+   545 = 2605			_CONFIG.CAPABILITY	= DATAORIGIN+$0001
+   546 = 2606			_CONFIG.POSTDIVIDE	= DATAORIGIN+$0002
+   547 = 2607			_CONFIG.GTIAEN	= DATAORIGIN+$0003
+   548 = 2608			_CONFIG.PSGMODE	= DATAORIGIN+$0004
+   549 = 2609			_CONFIG.SIDMODE	= DATAORIGIN+$0005
+   550 = 260A			_CONFIG.RESTRICT	= DATAORIGIN+$0006
+   551 = 260B			_CONFIG._RESERVED	= DATAORIGIN+$0007
+   552 = 260E			_CONFIG._FLASH	= DATAORIGIN+$000A
+   553
+   554 = 2614			@VarData	= _CONFIG
+   555 = 0002			@VarDataSize	= 2
+   556
+   557 238E			@exit
+   558 					.ifdef @new
+   559 					lda <@VarData
+   560 					sta :ztmp
+   561 					lda >@VarData
+   562 					ldy #@VarDataSize-1
+   563 					jmp @FreeMem
+   564 					els
+   565 238E 60				rts						; ret
+   566 					eif
+   567 				.endl
+   568
+   569 				; ------------------------------------------------------------
+   570
+   571 = 0020			PMC_PAL	= $20
+   572 = 0010			PMC_MONODET	= $10
+   573 = 0008			PMC_IRQEN	= $08
+   574 = 0004			PMC_CHANNELMODE	= $04
+   575 = 0001			PMC_SATURATE	= $01
+   576 = 0040			PMC_FLASH	= $40
+   577 = 0020			PMC_SAMPLE	= $20
+   578 = 0010			PMC_COVOX	= $10
+   579 = 0008			PMC_PSG	= $08
+   580 = 0004			PMC_SID	= $04
+   581 = 0003			PMC_POKEYS	= $03
+   582 = 0000			PMC_POKEY_MONO	= $00
+   583 = 0001			PMC_POKEY_STEREO	= $01
+   584 = 0002			PMC_POKEY_QUAD	= $02
+   585 = 0003			PMC_POSTDIVCH0	= $03
+   586 = 0000			PMC_POSTDIV0_1	= $00
+   587 = 0001			PMC_POSTDIV0_2	= $01
+   588 = 0002			PMC_POSTDIV0_4	= $02
+   589 = 0003			PMC_POSTDIV0_8	= $03
+   590 = 000C			PMC_POSTDIVCH1	= $0C
+   591 = 0000			PMC_POSTDIV1_1	= $00
+   592 = 0004			PMC_POSTDIV1_2	= $04
+   593 = 0008			PMC_POSTDIV1_4	= $08
+   594 = 000C			PMC_POSTDIV1_8	= $0C
+   595 = 0030			PMC_POSTDIVCH2	= $30
+   596 = 0000			PMC_POSTDIV2_1	= $00
+   597 = 0010			PMC_POSTDIV2_2	= $10
+   598 = 0020			PMC_POSTDIV2_4	= $20
+   599 = 0030			PMC_POSTDIV2_8	= $30
+   600 = 00C0			PMC_POSTDIVCH3	= $C0
+   601 = 0000			PMC_POSTDIV3_1	= $00
+   602 = 0040			PMC_POSTDIV3_2	= $40
+   603 = 0080			PMC_POSTDIV3_4	= $80
+   604 = 00C0			PMC_POSTDIV3_8	= $C0
+   605 = 000F			PMC_GTIAEN	= $0F
+   606 = 0001			PMC_GTIA0	= $01
+   607 = 0002			PMC_GTIA1	= $02
+   608 = 0004			PMC_GTIA2	= $04
+   609 = 0008			PMC_GTIA3	= $08
+   610 = 0060			PSG_VOLP	= $60
+   611 = 0000			PSG_LOGVOL	= $00
+   612 = 01100000		PSG_LINVOL	= $1100000
+   613 = 0010			PSG_ENV	= $10
+   614 = 0010			PSG_ENV16	= $10
+   615 = 0000			PSG_ENV32	= $00
+   616 = 000C			PSG_STEREO	= $0C
+   617 = 0000			PSG_MONO	= $00
+   618 = 0100			PSG_ABBC	= $0100
+   619 = 1000			PSG_ACBC	= $1000
+   620 = 1100			PSG_CLCR	= $1100
+   621 = 0003			PSG_FREQ	= $03
+   622 = 0000			PSG_2MHZ	= $00
+   623 = 0001			PSG_1MHZ	= $01
+   624 = 0002			PSG_1_7MHZ	= $02
+   625 = 0001			SID_1_CHIPTYPE	= $01
+   626 = 0010			SID_2_CHIPTYPE	= $10
+   627 = 0002			SID_1_DIGIFIX	= $02
+   628 = 0020			SID_2_DIGIFIX	= $20
+   629 = 0010			PMR_SAMPLE	= $10
+   630 = 0008			PMR_PSG	= $08
+   631 = 0004			PMR_SID	= $04
+   632 = 0003			PMR_POKEYS	= $03
+   633 = 0000			PMR_POKEY_MONO	= $00
+   634 = 0001			PMR_POKEY_STERO	= $01
+   635 = 0002			PMR_POKEY_QUAD	= $02
+   636 = 003F			PMC_CFGEN	= $3F
+   637 = 0004			FLASH_CFG	= $04
+   638 = 0000			FLASH_FIRMWARE	= $00
+   639 = 10000000		FLASH_VALID	= $10000000
+   640 = 0002			FLASH_REQ	= $02
+   641 = 0001			FLASH_RW	= $01
+   642 = 0001			FLASH_READ	= $01
+   643 = 0000			FLASH_WRITE	= $00
+   644 = 0038			FLASH_A14_16	= $38
+   645 = 00FF			FLASH_A6_13	= $FF
+   646 = 00FC			FLASH_A0_5	= $FC
+   647 = 0003			FLASH_WIN	= $03
+   648 = D20C			PMCID	= $D20C
+   649 = D20C			PMCCONFIG	= $D20C
+   650 = D214			PMCVERSION	= $D214
+   651 = D214			PMCVERSIONLOC	= $D214
+   652 = D21B			PMCFLASHOP	= $D21B
+   653 = D21D			PMCFLASHADL	= $D21D
+   654 = D21E			PMCFLASHADH	= $D21E
+   655 = D21F			PMCFLASHDAT	= $D21F
+   656 = D210			adr.LIFECONFIG	= $D210
+   657 238F			.var LIFECONFIG	= adr.LIFECONFIG .word
+   658 = D210			LIFECONFIG.MODE	= $D210
+   659 = D211			LIFECONFIG.CAPABILITY	= $D211
+   660 = D212			LIFECONFIG.POSTDIVIDE	= $D212
+   661 = D213			LIFECONFIG.GTIAEN	= $D213
+   662 = D214			LIFECONFIG.PSGMODE	= $D214
+   663 = D215			LIFECONFIG.SIDMODE	= $D215
+   664 = D216			LIFECONFIG.RESTRICT	= $D216
+   665 = D217			adr.LIFECONFIG._RESERVED	= $D217
+   666 238F			.var LIFECONFIG._RESERVED	= adr.LIFECONFIG._RESERVED .word
+   667 = D219			adr.LIFECONFIG._FLASH	= $D219
+   668 238F			.var LIFECONFIG._FLASH	= adr.LIFECONFIG._FLASH .word
+   669
+   670 = 238F 10 D2		LIFECONFIG
+   670 = 2391 17 D2		LIFECONFIG._RESERVED
+   670 = 2393 19 D2		LIFECONFIG._FLASH
+   670 				.endl							; UNIT POKEYMAXCONF
+   671 2395			l_0206
+   672
+   673 				; optimize FAIL ('POKEYMAXCONF.DETECTPOKEYMAX', pokeymaxtest.pas), line = 8
+   674
+   675 2395 20 11 23			jsr POKEYMAXCONF.DETECTPOKEYMAX
+   676 2398 AD 10 26			lda POKEYMAXCONF.DETECTPOKEYMAX.RESULT
+   677 239B D0 0F			jne l_02EF
+   678
+   679 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 10
+   680
+   681 					@printSTRING #CODEORIGIN+$0000
+   681 				 LDY> CODEORIGIN+$0000\ LDA< CODEORIGIN+$0000\ JSR @PRINTSTRING
+   681 239D A0 20		 LDY> CODEORIGIN+$0000
+   681 239F A9 00		 LDA< CODEORIGIN+$0000
+   681 23A1 20 B0 22		 JSR @PRINTSTRING
+   682 23A4 20 A2 22			@printEOL
+   683 23A7 A9 00			lda #$00
+   684 23A9 4C E5 25			jmp @halt
+   685 23AC			l_02EF
+   686
+   687 				; optimize FAIL ('POKEYMAXCONF.GETVERSION', pokeymaxtest.pas), line = 13
+   688
+   689 23AC 20 20 23			jsr POKEYMAXCONF.GETVERSION
+   690 23AF E8				inx
+   691 23B0 AD 11 26			lda POKEYMAXCONF.GETVERSION.RESULT
+   692 23B3 85 88			sta @move.src
+   693 23B5 AD 12 26			lda POKEYMAXCONF.GETVERSION.RESULT+1
+   694 23B8 85 89			sta @move.src+1
+   695 					@moveSTRING PMVER #9
+   695 				 MWA PMVER @MOVE.DST\ MWA #9 @MOVE.CNT\ JSR @MOVESTRING
+   695 23BA AD 01 26 85 8C AD +  MWA PMVER @MOVE.DST
+   695 23C4 A9 09 85 84 A9 00 +  MWA #9 @MOVE.CNT
+   695 23CC 20 92 22		 JSR @MOVESTRING
+   696 23CF CA				dex
+   697
+   698 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 14
+   699
+   700 					@printSTRING #CODEORIGIN+$001E
+   700 				 LDY> CODEORIGIN+$001E\ LDA< CODEORIGIN+$001E\ JSR @PRINTSTRING
+   700 23D0 A0 20		 LDY> CODEORIGIN+$001E
+   700 23D2 A9 1E		 LDA< CODEORIGIN+$001E
+   700 23D4 20 B0 22		 JSR @PRINTSTRING
+   701 					@printSTRING PMVER
+   701 				 LDY PMVER+1\ LDA PMVER\ JSR @PRINTSTRING
+   701 23D7 AC 02 26		 LDY PMVER+1
+   701 23DA AD 01 26		 LDA PMVER
+   701 23DD 20 B0 22		 JSR @PRINTSTRING
+   702 23E0 20 A2 22			@printEOL
+   703
+   704 				; optimize OK (pokeymaxtest.pas), line = 15
+   705
+   706 23E3 AD FB 25			lda CONFIG
+   707 23E6 8D 14 26			sta POKEYMAXCONF.FETCHCONFIGURATION._CONFIG
+   708 23E9 AD FC 25			lda CONFIG+1
+   709 23EC 8D 15 26			sta POKEYMAXCONF.FETCHCONFIGURATION._CONFIG+1
+   710 23EF 20 65 23			jsr POKEYMAXCONF.FETCHCONFIGURATION
+   711
+   712 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 16
+   713
+   714 					@printSTRING #CODEORIGIN+$002E
+   714 				 LDY> CODEORIGIN+$002E\ LDA< CODEORIGIN+$002E\ JSR @PRINTSTRING
+   714 23F2 A0 20		 LDY> CODEORIGIN+$002E
+   714 23F4 A9 2E		 LDA< CODEORIGIN+$002E
+   714 23F6 20 B0 22		 JSR @PRINTSTRING
+   715 23F9 20 A2 22			@printEOL
+   716
+   717 				; optimize OK (pokeymaxtest.pas), line = 17
+   718
+   719 23FC AD 17 26			lda CONFIG.CAPABILITY
+   720 23FF 29 40			and #$40
+   721 2401 F0 0A			jeq l_031D
+   722
+   723 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 18
+   724
+   725 					@printSTRING #CODEORIGIN+$003B
+   725 				 LDY> CODEORIGIN+$003B\ LDA< CODEORIGIN+$003B\ JSR @PRINTSTRING
+   725 2403 A0 20		 LDY> CODEORIGIN+$003B
+   725 2405 A9 3B		 LDA< CODEORIGIN+$003B
+   725 2407 20 B0 22		 JSR @PRINTSTRING
+   726 240A 20 A2 22			@printEOL
+   727 240D			l_031D
+   728
+   729 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 20
+   730
+   731 					@printSTRING #CODEORIGIN+$0067
+   731 				 LDY> CODEORIGIN+$0067\ LDA< CODEORIGIN+$0067\ JSR @PRINTSTRING
+   731 240D A0 20		 LDY> CODEORIGIN+$0067
+   731 240F A9 67		 LDA< CODEORIGIN+$0067
+   731 2411 20 B0 22		 JSR @PRINTSTRING
+   732
+   733 				; optimize OK (pokeymaxtest.pas), line = 21
+   734
+   735 2414 AD 17 26			lda CONFIG.CAPABILITY
+   736 2417 29 03			and #$03
+   737 2419 8D 2E 26			sta @CASETMP_0003
+   738 241C C9 00			cmp #$00
+   739 241E D0 0D			jne l_0335
+   740 				@
+   741
+   742 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 22
+   743
+   744 					@printSTRING #CODEORIGIN+$0070
+   744 				 LDY> CODEORIGIN+$0070\ LDA< CODEORIGIN+$0070\ JSR @PRINTSTRING
+   744 2420 A0 20		 LDY> CODEORIGIN+$0070
+   744 2422 A9 70		 LDA< CODEORIGIN+$0070
+   744 2424 20 B0 22		 JSR @PRINTSTRING
+   745 2427 20 A2 22			@printEOL
+   746
+   747 242A 4C 4C 24			jmp a_0003
+   748 242D			l_0335
+   749 242D C9 01			cmp #$01
+   750 242F D0 0D			jne l_0341
+   751 				@
+   752
+   753 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 23
+   754
+   755 					@printSTRING #CODEORIGIN+$0080
+   755 				 LDY> CODEORIGIN+$0080\ LDA< CODEORIGIN+$0080\ JSR @PRINTSTRING
+   755 2431 A0 20		 LDY> CODEORIGIN+$0080
+   755 2433 A9 80		 LDA< CODEORIGIN+$0080
+   755 2435 20 B0 22		 JSR @PRINTSTRING
+   756 2438 20 A2 22			@printEOL
+   757
+   758 243B 4C 4C 24			jmp a_0003
+   759 243E			l_0341
+   760 243E C9 02			cmp #$02
+   761 2440 D0 0A			jne l_034D
+   762 				@
+   763
+   764 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 24
+   765
+   766 					@printSTRING #CODEORIGIN+$0097
+   766 				 LDY> CODEORIGIN+$0097\ LDA< CODEORIGIN+$0097\ JSR @PRINTSTRING
+   766 2442 A0 20		 LDY> CODEORIGIN+$0097
+   766 2444 A9 97		 LDA< CODEORIGIN+$0097
+   766 2446 20 B0 22		 JSR @PRINTSTRING
+   767 2449 20 A2 22			@printEOL
+   768
+   769 244C			l_034D
+   770 244C			a_0003
+   771
+   772 				; optimize OK (pokeymaxtest.pas), line = 27
+   773
+   774 244C AD 17 26			lda CONFIG.CAPABILITY
+   775 244F 29 04			and #$04
+   776 2451 D0 03 4C EE 24		jeq l_036D
+   777
+   778 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 29
+   779
+   780 					@printSTRING #CODEORIGIN+$00B0
+   780 				 LDY> CODEORIGIN+$00B0\ LDA< CODEORIGIN+$00B0\ JSR @PRINTSTRING
+   780 2456 A0 20		 LDY> CODEORIGIN+$00B0
+   780 2458 A9 B0		 LDA< CODEORIGIN+$00B0
+   780 245A 20 B0 22		 JSR @PRINTSTRING
+   781 245D 20 A2 22			@printEOL
+   782
+   783 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 30
+   784
+   785 					@printSTRING #CODEORIGIN+$00BF
+   785 				 LDY> CODEORIGIN+$00BF\ LDA< CODEORIGIN+$00BF\ JSR @PRINTSTRING
+   785 2460 A0 20		 LDY> CODEORIGIN+$00BF
+   785 2462 A9 BF		 LDA< CODEORIGIN+$00BF
+   785 2464 20 B0 22		 JSR @PRINTSTRING
+   786
+   787 				; optimize OK (pokeymaxtest.pas), line = 31
+   788
+   789 2467 AD 1B 26			lda CONFIG.SIDMODE
+   790 246A 29 01			and #$01
+   791 246C 8D 2F 26			sta @CASETMP_0004
+   792 246F C9 00			cmp #$00
+   793 2471 D0 0A			jne l_0383
+   794 				@
+   795
+   796 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 32
+   797
+   798 					@printSTRING #CODEORIGIN+$00C6
+   798 				 LDY> CODEORIGIN+$00C6\ LDA< CODEORIGIN+$00C6\ JSR @PRINTSTRING
+   798 2473 A0 20		 LDY> CODEORIGIN+$00C6
+   798 2475 A9 C6		 LDA< CODEORIGIN+$00C6
+   798 2477 20 B0 22		 JSR @PRINTSTRING
+   799
+   800 247A 4C 84 24			jmp a_0004
+   801 247D			l_0383
+   802
+   803 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 34
+   804
+   805 					@printSTRING #CODEORIGIN+$00DD
+   805 				 LDY> CODEORIGIN+$00DD\ LDA< CODEORIGIN+$00DD\ JSR @PRINTSTRING
+   805 247D A0 20		 LDY> CODEORIGIN+$00DD
+   805 247F A9 DD		 LDA< CODEORIGIN+$00DD
+   805 2481 20 B0 22		 JSR @PRINTSTRING
+   806 2484			a_0004
+   807
+   808 				; optimize OK (pokeymaxtest.pas), line = 36
+   809
+   810 2484 AD 1B 26			lda CONFIG.SIDMODE
+   811 2487 29 02			and #$02
+   812 2489 8D 30 26			sta @CASETMP_0005
+   813 248C C9 00			cmp #$00
+   814 248E D0 0D			jne l_039D
+   815 				@
+   816
+   817 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 37
+   818
+   819 					@printSTRING #CODEORIGIN+$00E4
+   819 				 LDY> CODEORIGIN+$00E4\ LDA< CODEORIGIN+$00E4\ JSR @PRINTSTRING
+   819 2490 A0 20		 LDY> CODEORIGIN+$00E4
+   819 2492 A9 E4		 LDA< CODEORIGIN+$00E4
+   819 2494 20 B0 22		 JSR @PRINTSTRING
+   820 2497 20 A2 22			@printEOL
+   821
+   822 249A 4C A7 24			jmp a_0005
+   823 249D			l_039D
+   824
+   825 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 39
+   826
+   827 					@printSTRING #CODEORIGIN+$00F5
+   827 				 LDY> CODEORIGIN+$00F5\ LDA< CODEORIGIN+$00F5\ JSR @PRINTSTRING
+   827 249D A0 20		 LDY> CODEORIGIN+$00F5
+   827 249F A9 F5		 LDA< CODEORIGIN+$00F5
+   827 24A1 20 B0 22		 JSR @PRINTSTRING
+   828 24A4 20 A2 22			@printEOL
+   829 24A7			a_0005
+   830
+   831 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 41
+   832
+   833 					@printSTRING #CODEORIGIN+$0103
+   833 				 LDY> CODEORIGIN+$0103\ LDA< CODEORIGIN+$0103\ JSR @PRINTSTRING
+   833 24A7 A0 21		 LDY> CODEORIGIN+$0103
+   833 24A9 A9 03		 LDA< CODEORIGIN+$0103
+   833 24AB 20 B0 22		 JSR @PRINTSTRING
+   834
+   835 				; optimize OK (pokeymaxtest.pas), line = 42
+   836
+   837 24AE AD 1B 26			lda CONFIG.SIDMODE
+   838 24B1 29 10			and #$10
+   839 24B3 8D 31 26			sta @CASETMP_0006
+   840 24B6 C9 00			cmp #$00
+   841 24B8 D0 0A			jne l_03BA
+   842 				@
+   843
+   844 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 43
+   845
+   846 					@printSTRING #CODEORIGIN+$00C6
+   846 				 LDY> CODEORIGIN+$00C6\ LDA< CODEORIGIN+$00C6\ JSR @PRINTSTRING
+   846 24BA A0 20		 LDY> CODEORIGIN+$00C6
+   846 24BC A9 C6		 LDA< CODEORIGIN+$00C6
+   846 24BE 20 B0 22		 JSR @PRINTSTRING
+   847
+   848 24C1 4C CB 24			jmp a_0006
+   849 24C4			l_03BA
+   850
+   851 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 45
+   852
+   853 					@printSTRING #CODEORIGIN+$00DD
+   853 				 LDY> CODEORIGIN+$00DD\ LDA< CODEORIGIN+$00DD\ JSR @PRINTSTRING
+   853 24C4 A0 20		 LDY> CODEORIGIN+$00DD
+   853 24C6 A9 DD		 LDA< CODEORIGIN+$00DD
+   853 24C8 20 B0 22		 JSR @PRINTSTRING
+   854 24CB			a_0006
+   855
+   856 				; optimize OK (pokeymaxtest.pas), line = 47
+   857
+   858 24CB AD 1B 26			lda CONFIG.SIDMODE
+   859 24CE 29 20			and #$20
+   860 24D0 8D 32 26			sta @CASETMP_0007
+   861 24D3 C9 00			cmp #$00
+   862 24D5 D0 0D			jne l_03D4
+   863 				@
+   864
+   865 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 48
+   866
+   867 					@printSTRING #CODEORIGIN+$00E4
+   867 				 LDY> CODEORIGIN+$00E4\ LDA< CODEORIGIN+$00E4\ JSR @PRINTSTRING
+   867 24D7 A0 20		 LDY> CODEORIGIN+$00E4
+   867 24D9 A9 E4		 LDA< CODEORIGIN+$00E4
+   867 24DB 20 B0 22		 JSR @PRINTSTRING
+   868 24DE 20 A2 22			@printEOL
+   869
+   870 24E1 4C EE 24			jmp a_0007
+   871 24E4			l_03D4
+   872
+   873 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 50
+   874
+   875 					@printSTRING #CODEORIGIN+$00F5
+   875 				 LDY> CODEORIGIN+$00F5\ LDA< CODEORIGIN+$00F5\ JSR @PRINTSTRING
+   875 24E4 A0 20		 LDY> CODEORIGIN+$00F5
+   875 24E6 A9 F5		 LDA< CODEORIGIN+$00F5
+   875 24E8 20 B0 22		 JSR @PRINTSTRING
+   876 24EB 20 A2 22			@printEOL
+   877 24EE			a_0007
+   878 24EE			l_036D
+   879
+   880 				; optimize OK (pokeymaxtest.pas), line = 54
+   881
+   882 24EE AD 17 26			lda CONFIG.CAPABILITY
+   883 24F1 29 08			and #$08
+   884 24F3 D0 03 4C C3 25		jeq l_03F7
+   885
+   886 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 56
+   887
+   888 					@printSTRING #CODEORIGIN+$010A
+   888 				 LDY> CODEORIGIN+$010A\ LDA< CODEORIGIN+$010A\ JSR @PRINTSTRING
+   888 24F8 A0 21		 LDY> CODEORIGIN+$010A
+   888 24FA A9 0A		 LDA< CODEORIGIN+$010A
+   888 24FC 20 B0 22		 JSR @PRINTSTRING
+   889
+   890 				; optimize OK (pokeymaxtest.pas), line = 57
+   891
+   892 24FF AD 1A 26			lda CONFIG.PSGMODE
+   893 2502 29 03			and #$03
+   894 2504 8D 33 26			sta @CASETMP_0008
+   895 2507 C9 00			cmp #$00
+   896 2509 D0 0A			jne l_040A
+   897 				@
+   898
+   899 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 58
+   900
+   901 					@printSTRING #CODEORIGIN+$011A
+   901 				 LDY> CODEORIGIN+$011A\ LDA< CODEORIGIN+$011A\ JSR @PRINTSTRING
+   901 250B A0 21		 LDY> CODEORIGIN+$011A
+   901 250D A9 1A		 LDA< CODEORIGIN+$011A
+   901 250F 20 B0 22		 JSR @PRINTSTRING
+   902
+   903 2512 4C 2E 25			jmp a_0008
+   904 2515			l_040A
+   905 2515 C9 01			cmp #$01
+   906 2517 D0 0A			jne l_0416
+   907 				@
+   908
+   909 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 59
+   910
+   911 					@printSTRING #CODEORIGIN+$0128
+   911 				 LDY> CODEORIGIN+$0128\ LDA< CODEORIGIN+$0128\ JSR @PRINTSTRING
+   911 2519 A0 21		 LDY> CODEORIGIN+$0128
+   911 251B A9 28		 LDA< CODEORIGIN+$0128
+   911 251D 20 B0 22		 JSR @PRINTSTRING
+   912
+   913 2520 4C 2E 25			jmp a_0008
+   914 2523			l_0416
+   915 2523 C9 02			cmp #$02
+   916 2525 D0 07			jne l_0422
+   917 				@
+   918
+   919 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 60
+   920
+   921 					@printSTRING #CODEORIGIN+$0136
+   921 				 LDY> CODEORIGIN+$0136\ LDA< CODEORIGIN+$0136\ JSR @PRINTSTRING
+   921 2527 A0 21		 LDY> CODEORIGIN+$0136
+   921 2529 A9 36		 LDA< CODEORIGIN+$0136
+   921 252B 20 B0 22		 JSR @PRINTSTRING
+   922
+   923 252E			l_0422
+   924 252E			a_0008
+   925
+   926 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 62
+   927
+   928 					@printSTRING #CODEORIGIN+$0146
+   928 				 LDY> CODEORIGIN+$0146\ LDA< CODEORIGIN+$0146\ JSR @PRINTSTRING
+   928 252E A0 21		 LDY> CODEORIGIN+$0146
+   928 2530 A9 46		 LDA< CODEORIGIN+$0146
+   928 2532 20 B0 22		 JSR @PRINTSTRING
+   929 2535 20 A2 22			@printEOL
+   930
+   931 				; optimize OK (pokeymaxtest.pas), line = 63
+   932
+   933 2538 AD 1A 26			lda CONFIG.PSGMODE
+   934 253B 29 60			and #$60
+   935 253D 8D 34 26			sta @CASETMP_0009
+   936 2540 C9 00			cmp #$00
+   937 2542 D0 0A			jne l_043E
+   938 				@
+   939
+   940 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 64
+   941
+   942 					@printSTRING #CODEORIGIN+$014D
+   942 				 LDY> CODEORIGIN+$014D\ LDA< CODEORIGIN+$014D\ JSR @PRINTSTRING
+   942 2544 A0 21		 LDY> CODEORIGIN+$014D
+   942 2546 A9 4D		 LDA< CODEORIGIN+$014D
+   942 2548 20 B0 22		 JSR @PRINTSTRING
+   943
+   944 254B 4C 59 25			jmp a_0009
+   945 254E			l_043E
+   946 254E C9 00			cmp #$00
+   947 2550 D0 07			jne l_044A
+   948 				@
+   949
+   950 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 65
+   951
+   952 					@printSTRING #CODEORIGIN+$015B
+   952 				 LDY> CODEORIGIN+$015B\ LDA< CODEORIGIN+$015B\ JSR @PRINTSTRING
+   952 2552 A0 21		 LDY> CODEORIGIN+$015B
+   952 2554 A9 5B		 LDA< CODEORIGIN+$015B
+   952 2556 20 B0 22		 JSR @PRINTSTRING
+   953
+   954 2559			l_044A
+   955 2559			a_0009
+   956
+   957 				; optimize OK (pokeymaxtest.pas), line = 67
+   958
+   959 2559 AD 1A 26			lda CONFIG.PSGMODE
+   960 255C 29 10			and #$10
+   961 255E 8D 35 26			sta @CASETMP_000A
+   962 2561 C9 10			cmp #$10
+   963 2563 D0 0A			jne l_0462
+   964 				@
+   965
+   966 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 68
+   967
+   968 					@printSTRING #CODEORIGIN+$016C
+   968 				 LDY> CODEORIGIN+$016C\ LDA< CODEORIGIN+$016C\ JSR @PRINTSTRING
+   968 2565 A0 21		 LDY> CODEORIGIN+$016C
+   968 2567 A9 6C		 LDA< CODEORIGIN+$016C
+   968 2569 20 B0 22		 JSR @PRINTSTRING
+   969
+   970 256C 4C 7A 25			jmp a_000A
+   971 256F			l_0462
+   972 256F C9 00			cmp #$00
+   973 2571 D0 07			jne l_046E
+   974 				@
+   975
+   976 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 69
+   977
+   978 					@printSTRING #CODEORIGIN+$0180
+   978 				 LDY> CODEORIGIN+$0180\ LDA< CODEORIGIN+$0180\ JSR @PRINTSTRING
+   978 2573 A0 21		 LDY> CODEORIGIN+$0180
+   978 2575 A9 80		 LDA< CODEORIGIN+$0180
+   978 2577 20 B0 22		 JSR @PRINTSTRING
+   979
+   980 257A			l_046E
+   981 257A			a_000A
+   982
+   983 				; optimize OK (pokeymaxtest.pas), line = 71
+   984
+   985 257A AD 1A 26			lda CONFIG.PSGMODE
+   986 257D 29 0C			and #$0C
+   987 257F 8D 36 26			sta @CASETMP_000B
+   988 2582 C9 00			cmp #$00
+   989 2584 D0 0D			jne l_0486
+   990 				@
+   991
+   992 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 72
+   993
+   994 					@printSTRING #CODEORIGIN+$0194
+   994 				 LDY> CODEORIGIN+$0194\ LDA< CODEORIGIN+$0194\ JSR @PRINTSTRING
+   994 2586 A0 21		 LDY> CODEORIGIN+$0194
+   994 2588 A9 94		 LDA< CODEORIGIN+$0194
+   994 258A 20 B0 22		 JSR @PRINTSTRING
+   995 258D 20 A2 22			@printEOL
+   996
+   997 2590 4C C3 25			jmp a_000B
+   998 2593			l_0486
+   999 2593 C9 00			cmp #$00
+  1000 2595 D0 0D			jne l_0492
+  1001 				@
+  1002
+  1003 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 73
+  1004
+  1005 					@printSTRING #CODEORIGIN+$01A1
+  1005 				 LDY> CODEORIGIN+$01A1\ LDA< CODEORIGIN+$01A1\ JSR @PRINTSTRING
+  1005 2597 A0 21		 LDY> CODEORIGIN+$01A1
+  1005 2599 A9 A1		 LDA< CODEORIGIN+$01A1
+  1005 259B 20 B0 22		 JSR @PRINTSTRING
+  1006 259E 20 A2 22			@printEOL
+  1007
+  1008 25A1 4C C3 25			jmp a_000B
+  1009 25A4			l_0492
+  1010 25A4 C9 00			cmp #$00
+  1011 25A6 D0 0D			jne l_049E
+  1012 				@
+  1013
+  1014 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 74
+  1015
+  1016 					@printSTRING #CODEORIGIN+$01B1
+  1016 				 LDY> CODEORIGIN+$01B1\ LDA< CODEORIGIN+$01B1\ JSR @PRINTSTRING
+  1016 25A8 A0 21		 LDY> CODEORIGIN+$01B1
+  1016 25AA A9 B1		 LDA< CODEORIGIN+$01B1
+  1016 25AC 20 B0 22		 JSR @PRINTSTRING
+  1017 25AF 20 A2 22			@printEOL
+  1018
+  1019 25B2 4C C3 25			jmp a_000B
+  1020 25B5			l_049E
+  1021 25B5 C9 00			cmp #$00
+  1022 25B7 D0 0A			jne l_04AA
+  1023 				@
+  1024
+  1025 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 75
+  1026
+  1027 					@printSTRING #CODEORIGIN+$01C1
+  1027 				 LDY> CODEORIGIN+$01C1\ LDA< CODEORIGIN+$01C1\ JSR @PRINTSTRING
+  1027 25B9 A0 21		 LDY> CODEORIGIN+$01C1
+  1027 25BB A9 C1		 LDA< CODEORIGIN+$01C1
+  1027 25BD 20 B0 22		 JSR @PRINTSTRING
+  1028 25C0 20 A2 22			@printEOL
+  1029
+  1030 25C3			l_04AA
+  1031 25C3			a_000B
+  1032 25C3			l_03F7
+  1033
+  1034 				; optimize OK (pokeymaxtest.pas), line = 78
+  1035
+  1036 25C3 AD 17 26			lda CONFIG.CAPABILITY
+  1037 25C6 29 10			and #$10
+  1038 25C8 F0 0A			jeq l_04CD
+  1039
+  1040 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 79
+  1041
+  1042 					@printSTRING #CODEORIGIN+$01DA
+  1042 				 LDY> CODEORIGIN+$01DA\ LDA< CODEORIGIN+$01DA\ JSR @PRINTSTRING
+  1042 25CA A0 21		 LDY> CODEORIGIN+$01DA
+  1042 25CC A9 DA		 LDA< CODEORIGIN+$01DA
+  1042 25CE 20 B0 22		 JSR @PRINTSTRING
+  1043 25D1 20 A2 22			@printEOL
+  1044 25D4			l_04CD
+  1045
+  1046 				; optimize OK (pokeymaxtest.pas), line = 80
+  1047
+  1048 25D4 AD 17 26			lda CONFIG.CAPABILITY
+  1049 25D7 29 20			and #$20
+  1050 25D9 F0 0A			jeq l_04E9
+  1051
+  1052 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 81
+  1053
+  1054 					@printSTRING #CODEORIGIN+$01EB
+  1054 				 LDY> CODEORIGIN+$01EB\ LDA< CODEORIGIN+$01EB\ JSR @PRINTSTRING
+  1054 25DB A0 21		 LDY> CODEORIGIN+$01EB
+  1054 25DD A9 EB		 LDA< CODEORIGIN+$01EB
+  1054 25DF 20 B0 22		 JSR @PRINTSTRING
+  1055 25E2 20 A2 22			@printEOL
+  1056 25E5			l_04E9
+  1057
+  1058 				; ------------------------------------------------------------
+  1059
+  1060 = 2616			adr.CONFIG	= DATAORIGIN+$0012	; [15] RECORD
+  1061 25E5			.var CONFIG	= adr.CONFIG .word
+  1062 = 2616			CONFIG.MODE	= DATAORIGIN+$0012
+  1063 = 2617			CONFIG.CAPABILITY	= DATAORIGIN+$0013
+  1064 = 2618			CONFIG.POSTDIVIDE	= DATAORIGIN+$0014
+  1065 = 2619			CONFIG.GTIAEN	= DATAORIGIN+$0015
+  1066 = 261A			CONFIG.PSGMODE	= DATAORIGIN+$0016
+  1067 = 261B			CONFIG.SIDMODE	= DATAORIGIN+$0017
+  1068 = 261C			CONFIG.RESTRICT	= DATAORIGIN+$0018
+  1069 = 261D			adr.CONFIG._RESERVED	= [DATAORIGIN+$0019] .array [3]
+  1070 25E5			.var CONFIG._RESERVED	= adr.CONFIG._RESERVED .word
+  1071 = 2620			adr.CONFIG._FLASH	= [DATAORIGIN+$001C] .array [5]
+  1072 25E5			.var CONFIG._FLASH	= adr.CONFIG._FLASH .word
+  1073 = 2625			adr.PMVER	= [DATAORIGIN+$0021] .array [9]
+  1074 25E5			.var PMVER	= adr.PMVER .word
+  1075 = 262E			@CASETMP_0003	= DATAORIGIN+$002A
+  1076 = 262F			@CASETMP_0004	= DATAORIGIN+$002B
+  1077 = 2630			@CASETMP_0005	= DATAORIGIN+$002C
+  1078 = 2631			@CASETMP_0006	= DATAORIGIN+$002D
+  1079 = 2632			@CASETMP_0007	= DATAORIGIN+$002E
+  1080 = 2633			@CASETMP_0008	= DATAORIGIN+$002F
+  1081 = 2634			@CASETMP_0009	= DATAORIGIN+$0030
+  1082 = 2635			@CASETMP_000A	= DATAORIGIN+$0031
+  1083 = 2636			@CASETMP_000B	= DATAORIGIN+$0032
+  1084 25E5			@exit
+  1085
+  1086 25E5 A2 00		@halt	ldx #$00
+  1087 25E7 9A				txs
+  1088 					.ifdef MAIN.@DEFINES.ROMOFF
+  1089 					inc portb
+  1090 					.fi
+  1091
+  1092 25E8 A0 01			ldy #$01
+  1093
+  1094 25EA 60				rts
+  1095
+  1096 				; ------------------------------------------------------------
+  1097
+  1098 25EB 00 00 00 00 00 00 + IOCB@COPY	:16 brk
+  1099
+  1100 				; ------------------------------------------------------------
+  1101
+  1102 25FB			.local	@DEFINES
+  1103 25FB			ATARI
+  1104 				.endl
+  1105
+  1106 25FB			.local	@RESOURCE
+  1107 				.endl
+  1108
+  1109 = 25FB 16 26		CONFIG
+  1109 = 25FD 1D 26		CONFIG._RESERVED
+  1109 = 25FF 20 26		CONFIG._FLASH
+  1109 = 2601 25 26		PMVER
+  1109 				.endl							; MAIN
+  1110
+  1111 				; ------------------------------------------------------------
+  1112 				; ------------------------------------------------------------
+  1113
+  1114 				.macro	UNITINITIALIZATION
+  1115 				
+  1116 					.ifdef MAIN.SYSTEM.@UnitInit
+  1117 					jsr MAIN.SYSTEM.@UnitInit
+  1118 					.fi
+  1119 				
+  1120 					.ifdef MAIN.ATARI.@UnitInit
+  1121 					jsr MAIN.ATARI.@UnitInit
+  1122 					.fi
+  1123 				
+  1124 					.ifdef MAIN.CRT.@UnitInit
+  1125 					jsr MAIN.CRT.@UnitInit
+  1126 					.fi
+  1127 				
+  1128 					.ifdef MAIN.POKEYMAXCONF.@UnitInit
+  1129 					jsr MAIN.POKEYMAXCONF.@UnitInit
+  1130 					.fi
+  1131 				.endm
+  1132
+  1133 				; ------------------------------------------------------------
+  1134
+  1135 					ift .SIZEOF(MAIN.SYSTEM) > 0
+  1136 					.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
+  1136 				SYSTEM: $230D..$2310
+  1137 					eif
+  1138
+  1139 					ift .SIZEOF(MAIN.ATARI) > 0
+  1140 					.print 'ATARI: ',MAIN.ATARI,'..',MAIN.ATARI+.SIZEOF(MAIN.ATARI)-1
+  1141 					eif
+  1142
+  1143 					ift .SIZEOF(MAIN.CRT) > 0
+  1144 					.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
+  1145 					eif
+  1146
+  1147 					ift .SIZEOF(MAIN.POKEYMAXCONF) > 0
+  1148 					.print 'POKEYMAXCONF: ',MAIN.POKEYMAXCONF,'..',MAIN.POKEYMAXCONF+.SIZEOF(MAIN.POKEYMAXCONF)-1
+  1148 				POKEYMAXCONF: $2311..$2394
+  1149 					eif
+  1150
+  1151 					.print 'CODE: ',CODEORIGIN,'..',MAIN.@RESOURCE-1
+  1151 				CODE: $2000..$25FA
+  1152
+  1153 				; ------------------------------------------------------------
+  1154
+  1155 2603 00				.align $0004,$00
+  1156
+  1157 2604			DATAORIGIN
+  1158 2604 28 00 18 00 2D 0C	.by  $28 $00 $18 $00 $2D $0C
+  1159
+  1160 = 0006			VARINITSIZE	= *-DATAORIGIN
+  1161 = 0033			VARDATASIZE	= 51
+  1162
+  1163 = 2637			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
+  1164
+  1165 					.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
+  1165 				DATA: $2604..$2637
+  1166
+  1167 02E0-02E1> DF 22			run START
+  1168
+  1169 				; ------------------------------------------------------------
+  1170
+  1171 				.macro	STATICDATA
+  1172 				.by  $1C $53 $6F $72 $72 $79 $2C $20  $50 $4F $4B $45 $59 $4D $61 $78  $20 $6E $6F $74 $20 $66 $6F $75
+  1173 				.by  $6E $64 $20 $3B $28 $00 $0E $50  $4F $4B $45 $59 $4D $61 $78 $20  $76 $65 $72 $3A $20 $00 $0B $43
+  1174 				.by  $61 $70 $61 $62 $69 $6C $69 $74  $79 $3A $00 $2A $50 $6F $73 $73  $69 $62 $6C $65 $20 $74 $6F $20
+  1175 				.by  $66 $6C $61 $73 $68 $20 $66 $69  $72 $6D $77 $61 $72 $65 $20 $26  $20 $63 $6F $6E $66 $69 $67 $75
+  1176 				.by  $72 $61 $74 $69 $6F $6E $00 $07  $50 $4F $4B $45 $59 $3A $20 $00  $0E $6D $6F $6E $6F $20 $28 $31
+  1177 				.by  $20 $50 $4F $4B $45 $59 $29 $00  $15 $73 $74 $65 $72 $65 $6F $20  $28 $32 $20 $50 $4F $4B $45 $59
+  1178 				.by  $73 $29 $20 $4C $2F $52 $00 $17  $71 $75 $61 $64 $20 $28 $34 $20  $50 $4F $4B $45 $59 $73 $29 $20
+  1179 				.by  $4C $2F $52 $2F $4C $2F $52 $00  $0D $32 $78 $53 $49 $44 $20 $73  $75 $70 $70 $6F $72 $74 $00 $05
+  1180 				.by  $20 $20 $23 $31 $20 $00 $15 $38  $35 $38 $30 $20 $28 $6C $69 $6E  $65 $61 $72 $20 $66 $69 $6C $74
+  1181 				.by  $65 $72 $29 $20 $00 $05 $36 $35  $38 $31 $20 $00 $0F $77 $69 $74  $68 $6F $75 $74 $20 $44 $49 $47
+  1182 				.by  $49 $46 $49 $58 $00 $0C $77 $69  $74 $68 $20 $44 $49 $47 $49 $46  $49 $58 $00 $05 $20 $20 $23 $32
+  1183 				.by  $20 $00 $0E $32 $78 $50 $53 $47  $20 $73 $75 $70 $70 $6F $72 $74  $20 $00 $0C $40 $32 $4D $48 $7A
+  1184 				.by  $20 $63 $6C $6F $63 $6B $20 $00  $0C $40 $31 $4D $48 $7A $20 $63  $6C $6F $63 $6B $20 $00 $0E $40
+  1185 				.by  $31 $2E $37 $4D $48 $7A $20 $63  $6C $6F $63 $6B $20 $00 $05 $77  $69 $74 $68 $3A $00 $0C $6C $6F
+  1186 				.by  $67 $20 $76 $6F $6C $75 $6D $65  $3B $20 $00 $0F $6C $69 $6E $65  $61 $72 $20 $76 $6F $6C $75 $6D
+  1187 				.by  $65 $3B $20 $00 $12 $31 $36 $20  $73 $74 $65 $70 $20 $65 $6E $76  $65 $6C $6F $70 $65 $3B $20 $00
+  1188 				.by  $12 $33 $32 $20 $73 $74 $65 $70  $20 $65 $6E $76 $65 $6C $6F $70  $65 $3B $20 $00 $0B $6D $6F $6E
+  1189 				.by  $6F $20 $6F $75 $74 $70 $75 $74  $00 $0E $41 $2B $42 $20 $42 $2B  $43 $20 $6F $75 $74 $70 $75 $74
+  1190 				.by  $00 $0E $41 $2B $43 $20 $42 $2B  $43 $20 $6F $75 $74 $70 $75 $74  $00 $17 $23 $31 $20 $74 $6F $20
+  1191 				.by  $6C $65 $66 $74 $2C $20 $23 $32  $20 $74 $6F $20 $72 $69 $67 $68  $74 $00 $0F $34 $78 $43 $4F $56
+  1192 				.by  $4F $58 $20 $73 $75 $70 $70 $6F  $72 $74 $00 $12 $44 $4D $41 $20  $73 $61 $6D $70 $6C $65 $20 $73
+  1193 				.by  $75 $70 $70 $6F $72 $74 $00
+  1194 				.endm
+  1195
+  1196 					end

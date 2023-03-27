@@ -17,6 +17,7 @@ begin
     wait4key;
     halt;
   end;
+
   PMVER:=GetVersion;
   writeLn('POKEYMax ver: ',PMVER);
   fetchConfiguration(config);

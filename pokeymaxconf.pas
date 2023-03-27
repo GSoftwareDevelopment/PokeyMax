@@ -4,15 +4,16 @@ interface
 
 type
   TConfig = record
-    MODE,
-    CAPABILITY,
-    POSTDIVIDE,
-    GTIAEN,
-    PSGMODE,
-    SIDMODE,
-    RESTRICT:byte;
-    _RESERVED:array[0..2] of byte;
-    _FLASH:array[0..4] of byte;
+    MODE,                             // $d210 RW
+    CAPABILITY,                       // $d211 RW
+    POSTDIVIDE,                       // $d212 RW
+    GTIAEN,                           // $d213 RW
+    VERSION,                          // $d214 R/read char W/set location
+    PSGMODE,                          // $d215 RW
+    SIDMODE,                          // $d216 RW
+    RESTRICT:byte;                    // $d217 RW
+    _RESERVED:array[0..2] of byte;    // $d218-$d21a
+    _FLASH:array[0..4] of byte;       // $d21b-$d21f
   end;
 
 const
@@ -393,6 +394,7 @@ var
   [volatile] lifeConfig:TConfig absolute $d210; // R/W
 
 function detectPokeyMax:Boolean;
+procedure ConfigMode(state:boolean);
 function GetVersion:PString;
 procedure FetchConfiguration(var _config:TConfig);
 function FlashPokeyMax(var _data; startAdr:word; size:byte; mode:byte):boolean;
@@ -405,33 +407,46 @@ begin
   result:=(pmcID=1);
 end;
 
+{
+  setup PokeyMax bank
+  true - set configuration bank (at $d210)
+  false - set device access (Pokey #2 if enabled)
+}
+procedure configMode(state:boolean);
+begin
+  case state of
+    true: pmcConfig:=pmc_CFGEN; // enable PokeyMax config bank
+    false: pmcCONFIG:=0; // just disable PokeyMax config bank
+  end;
+end;
+
 function GetVersion:PString;
 var
   i:byte;
 
 begin
-  pmcCONFIG:=pmc_CFGEN; // enable PokeyMax config bank
+  configMode(true);
   result[0]:=#8;
   for i:=1 to 8 do
   begin
     pmcVERSIONLOC:=i-1;
     result[i]:=char(pmcVERSION);
   end;
-  pmcCONFIG:=0; // just disable PokeyMax config bank
+  configMode(false);
 end;
 
 procedure FetchConfiguration(var _config:TConfig);
 begin
-  pmcCONFIG:=pmc_CFGEN; // enable PokeyMax config bank
+  configMode(true);
   move(LifeConfig,_config,sizeOf(TConfig));
-  pmcCONFIG:=0; // just disable PokeyMax config bank
+  configMode(false);
 end;
 
 {
   function for flash PokeyMax chip
   _data - source of data
   startAdr - begining address of flash
-  size - size of data (max 256 bytes at once)
+  size - size of data (max 256 bytes at once) and MUST be divisible by 4
   mode - FLASH_CFG for flash configuration
          FLASH_FIRMWARE for flash firmware
          FLASH_VALID for validate data
@@ -449,75 +464,95 @@ var
   _FAL:byte absolute $dc;
   data:array[0..0] of byte;
 
-  i:byte;
+  i:byte absolute $dd;
+  win:byte absolute $de;
+  phase:byte; // 0 - erase; 1 - write; 2 - check
   validate:boolean;
+  _RW:byte;
 
-  procedure setAddr;
+  procedure setupFlash(RW:Byte);
   begin
+    adr:=startAdr;
+    _RW:=RW and flash_RW;
+
+    // prepare adress
     _fOP:=(adrH and %11100000) shr 2;
     _fAH:=(adrH shl 3) or (adrL shr 2);
     _fAL:=adrL shl 2;
+
+    // apply
+    pmcFLASHOP:=_fOP or mode or _RW;
+    pmcFLASHADH:=_fAH;
+  end;
+
+  {
+    Make request to PokeyMax and wait until done or timeout
+    return:
+      false - if request is done
+       true - if request is timeout
+  }
+  function makeRequest:boolean;
+  var
+    otm:byte;
+    tm:byte absolute 20;
+
+  begin
+    pmcFLASHOP:=_fOP or mode or flash_REQ or _RW;
+    otm:=tm;
+    // wait until request is made (flasg_REQ=0) or
+    // will not exceed the time
+    repeat
+      result:=(tm-otm)>0;
+    until (pmcFLASHOP and flash_REQ<>0) or result;
   end;
 
 begin
-  validate:=(mode and FLASH_VALID)<>0;
-  mode:=mode and FLASH_CFG; // prevent, from bad values
+  validate:=(mode and FLASH_VALID)<>0;    // check validation
+  mode:=mode and FLASH_CFG;               // prevent, from bad values
+
   data:=_data;
 
-  adr:=startAdr;
-
-  // erase
-  setAddr;
-  pmcFLASHOP:=_fOP or mode or flash_Write;
-  pmcFLASHADH:=_fAH;
-
-  for i:=0 to size-1 do
+  for phase:=0 to 2 do                    // phase loop
   begin
-    pmcFLASHADL:=_fAL or (i and 3);
-    pmcFLASHDAT:=$FF;
-    if i and 3=3 then // after each 4 bytes (32-bits) push request to PokeyMax
-      pmcFLASHOP:=_fOP or mode or flash_REQ or flash_Write;
-      inc(_fAL);
-  end;
+    if phase<2 then                       // write/erase
+      setupFlash(flash_Write)
+    else
+      if validate then                    // only if validate is set
+        setupFlash(flash_Read)            // read
+      else
+        break;                            // leave loop if validate is not set
 
-  // write
-  setAddr;
-  pmcFLASHOP:=_fOP+mode or flash_Write;
-  pmcFLASHADH:=_fAH;
-
-  for i:=0 to size-1 do
-  begin
-    pmcFLASHADL:=_fAL or (i and 3);
-    pmcFLASHDAT:=data[i];
-    if i and 3=3 then // after each 4 bytes (32-bits) push request to PokeyMax
-      pmcFLASHOP:=_fOP or mode or flash_REQ or flash_Write;
-    inc(_fAL);
-  end;
-
-  // correct check
-  if validate then
-  begin
-    setAddr;
-    pmcFLASHOP:=_fOP+mode or flash_Read;
-    pmcFLASHADH:=_fAH;
-
-    for i:=0 to size-1 do
+    for i:=0 to size-1 do                 // data loop
     begin
-      pmcFLASHADL:=_fAL or (i and 3);
-      if pmcFLASHDAT<>data[i] then exit(false);
-      if i and 3=3 then // after each 4 bytes (32-bits) push request to PokeyMax
-        pmcFLASHOP:=_fOP or mode or flash_REQ or flash_Read;
-      inc(_fAL);
-    end;
-  end;
+      win:=i and 3;
+      if (phase=2) and (win=0) then   // phase 2 (read) - get request before read 32-bits data
+        if makeRequest then exit(false);
+
+      pmcFLASHADL:=_fAL or win;
+      if phase=0 then                     // erase flash
+        pmcFLASHDAT:=$FF
+      else if phase=1 then                // write flash
+        pmcFLASHDAT:=data[i]
+      else if pmcFLASHDAT<>data[i] then   // validate (read)
+        exit(false);
+
+      if (phase<>2) and (win=3) then  // phase 0 & 1 - after each 4 bytes (32-bits) push request to PokeyMax
+        if makeRequest then exit(false);
+
+      inc(_fAL);                          // increment LSB address register (next 32-bits of data)
+
+    end;                                  // end data loop
+
+  end;                                    // end phase loop
+
   result:=true;
 end;
 
 procedure FlashConfiguration(var _config:TConfig);
 begin
-  pmcCONFIG:=pmc_CFGEN; // enable PokeyMax config bank
+  configMode(true);
   flashPokeyMax(_config,$0000,$10,FLASH_CFG);
-  pmcCONFIG:=0; // just disable PokeyMax config bank
+  configMode(false);
 end;
 
 end.

@@ -428,7 +428,7 @@ BLINK	= $80
 
 .local	DETECTPOKEYMAX					; FUNCTION
 
-; optimize OK (POKEYMAXCONF), line = 405
+; optimize OK (POKEYMAXCONF), line = 407
 
 ?volatile:
 	ldy #1
@@ -447,38 +447,87 @@ RESULT	= DATAORIGIN+$000C
 	rts						; ret
 .endl
 
-.local	GETVERSION					; FUNCTION
+.local	CONFIGMODE					; PROCEDURE
+	sta STATE
 
-; optimize OK (POKEYMAXCONF), line = 413
+; optimize OK (POKEYMAXCONF), line = 417
+
+	sta @CASETMP_0003
+	cmp #$01
+	jne l_0296
+@
+
+; optimize OK (POKEYMAXCONF), line = 418
 
 	lda #$3F
 	sta PMCCONFIG
 
-; optimize OK (POKEYMAXCONF), line = 414
+	jmp a_0003
+l_0296
+	cmp #$00
+	jne l_02A3
+@
+
+; optimize OK (POKEYMAXCONF), line = 419
+
+	lda #$00
+	sta PMCCONFIG
+
+l_02A3
+a_0003
+
+; ------------------------------------------------------------
+
+STATE	= DATAORIGIN+$000D
+@CASETMP_0003	= DATAORIGIN+$000E
+
+@VarData	= STATE
+@VarDataSize	= 2
+
+@exit
+	.ifdef @new
+	lda <@VarData
+	sta :ztmp
+	lda >@VarData
+	ldy #@VarDataSize-1
+	jmp @FreeMem
+	els
+	rts						; ret
+	eif
+.endl
+
+.local	GETVERSION					; FUNCTION
+
+; optimize OK (POKEYMAXCONF), line = 428
+
+	lda #$01
+	jsr CONFIGMODE
+
+; optimize OK (POKEYMAXCONF), line = 429
 
 	mwy RESULT :bp2
 	ldy #$00
 	lda #$08
 	sta (:bp2),y
 
-; optimize OK (POKEYMAXCONF), line = 415
+; optimize OK (POKEYMAXCONF), line = 430
 
 	lda #$01
 	sta I
 
-l_029D
+l_02C1
 ; --- ForToDoCondition
 	lda I
 	cmp #$09
-	jcs l_02AB
+	jcs l_02CF
 
-; optimize OK (POKEYMAXCONF), line = 417
+; optimize OK (POKEYMAXCONF), line = 432
 
 	ldy I
 	dey
 	sty PMCVERSIONLOC
 
-; optimize OK (POKEYMAXCONF), line = 418
+; optimize OK (POKEYMAXCONF), line = 433
 
 ?volatile:
 	mwy RESULT :bp2
@@ -488,19 +537,19 @@ l_029D
 
 ; --- ForToDoEpilog
 	inc I
-	jne l_029D
-l_02AB
+	jne l_02C1
+l_02CF
 
-; optimize OK (POKEYMAXCONF), line = 420
+; optimize OK (POKEYMAXCONF), line = 435
 
 	lda #$00
-	sta PMCCONFIG
+	jsr CONFIGMODE
 @exit
 
 ; ------------------------------------------------------------
 
-RESULT	= DATAORIGIN+$000D
-I	= DATAORIGIN+$000F
+RESULT	= DATAORIGIN+$000F
+I	= DATAORIGIN+$0011
 
 @VarData	= I
 @VarDataSize	= 1
@@ -510,12 +559,12 @@ I	= DATAORIGIN+$000F
 
 .local	FETCHCONFIGURATION				; PROCEDURE
 
-; optimize OK (POKEYMAXCONF), line = 425
+; optimize OK (POKEYMAXCONF), line = 440
 
-	lda #$3F
-	sta PMCCONFIG
+	lda #$01
+	jsr CONFIGMODE
 
-; optimize OK (POKEYMAXCONF), line = 426
+; optimize OK (POKEYMAXCONF), line = 441
 
 	lda LIFECONFIG
 	sta SYSTEM.MOVE_0242.SOURCE
@@ -525,7 +574,7 @@ I	= DATAORIGIN+$000F
 	sta SYSTEM.MOVE_0242.DEST
 	lda _CONFIG+1
 	sta SYSTEM.MOVE_0242.DEST+1
-	lda #$0F
+	lda #$10
 	sta SYSTEM.MOVE_0242.COUNT
 	lda #$00
 	sta SYSTEM.MOVE_0242.COUNT+1
@@ -533,23 +582,24 @@ I	= DATAORIGIN+$000F
 	m@INLINE
 	.endl
 
-; optimize OK (POKEYMAXCONF), line = 427
+; optimize OK (POKEYMAXCONF), line = 442
 
 	lda #$00
-	sta PMCCONFIG
+	jsr CONFIGMODE
 
 ; ------------------------------------------------------------
 
-_CONFIG	= DATAORIGIN+$0010
+_CONFIG	= DATAORIGIN+$0012
 _CONFIG.MODE	= DATAORIGIN+$0000
 _CONFIG.CAPABILITY	= DATAORIGIN+$0001
 _CONFIG.POSTDIVIDE	= DATAORIGIN+$0002
 _CONFIG.GTIAEN	= DATAORIGIN+$0003
-_CONFIG.PSGMODE	= DATAORIGIN+$0004
-_CONFIG.SIDMODE	= DATAORIGIN+$0005
-_CONFIG.RESTRICT	= DATAORIGIN+$0006
-_CONFIG._RESERVED	= DATAORIGIN+$0007
-_CONFIG._FLASH	= DATAORIGIN+$000A
+_CONFIG.VERSION	= DATAORIGIN+$0004
+_CONFIG.PSGMODE	= DATAORIGIN+$0005
+_CONFIG.SIDMODE	= DATAORIGIN+$0006
+_CONFIG.RESTRICT	= DATAORIGIN+$0007
+_CONFIG._RESERVED	= DATAORIGIN+$0008
+_CONFIG._FLASH	= DATAORIGIN+$000B
 
 @VarData	= _CONFIG
 @VarDataSize	= 2
@@ -659,12 +709,13 @@ LIFECONFIG.MODE	= $D210
 LIFECONFIG.CAPABILITY	= $D211
 LIFECONFIG.POSTDIVIDE	= $D212
 LIFECONFIG.GTIAEN	= $D213
-LIFECONFIG.PSGMODE	= $D214
-LIFECONFIG.SIDMODE	= $D215
-LIFECONFIG.RESTRICT	= $D216
-adr.LIFECONFIG._RESERVED	= $D217
+LIFECONFIG.VERSION	= $D214
+LIFECONFIG.PSGMODE	= $D215
+LIFECONFIG.SIDMODE	= $D216
+LIFECONFIG.RESTRICT	= $D217
+adr.LIFECONFIG._RESERVED	= $D218
 .var LIFECONFIG._RESERVED	= adr.LIFECONFIG._RESERVED .word
-adr.LIFECONFIG._FLASH	= $D219
+adr.LIFECONFIG._FLASH	= $D21A
 .var LIFECONFIG._FLASH	= adr.LIFECONFIG._FLASH .word
 
 .endl							; UNIT POKEYMAXCONF
@@ -677,10 +728,10 @@ adr.LIFECONFIG._FLASH	= $D219
 	sta KEYB
 
 ; --- RepeatUntilProlog
-l_02EA
+l_030C
 	lda KEYB
 	cmp #$FF
-	jeq l_02EA
+	jeq l_030C
 	lda #$FF
 	sta KEYB
 @exit
@@ -700,7 +751,7 @@ l_0206
 
 	jsr POKEYMAXCONF.DETECTPOKEYMAX
 	lda POKEYMAXCONF.DETECTPOKEYMAX.RESULT
-	jne l_0309
+	jne l_032B
 
 ; optimize FAIL ('@print', pokeymaxtest.pas), line = 16
 
@@ -712,9 +763,9 @@ l_0206
 	jsr WAIT4KEY
 	lda #$00
 	jmp @halt
-l_0309
+l_032B
 
-; optimize FAIL ('POKEYMAXCONF.GETVERSION', pokeymaxtest.pas), line = 20
+; optimize FAIL ('POKEYMAXCONF.GETVERSION', pokeymaxtest.pas), line = 21
 
 	jsr POKEYMAXCONF.GETVERSION
 	inx
@@ -725,13 +776,13 @@ l_0309
 	@moveSTRING PMVER #9
 	dex
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 21
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 22
 
 	@printSTRING #CODEORIGIN+$001E
 	@printSTRING PMVER
 	@printEOL
 
-; optimize OK (pokeymaxtest.pas), line = 22
+; optimize OK (pokeymaxtest.pas), line = 23
 
 	lda CONFIG
 	sta POKEYMAXCONF.FETCHCONFIGURATION._CONFIG
@@ -739,383 +790,384 @@ l_0309
 	sta POKEYMAXCONF.FETCHCONFIGURATION._CONFIG+1
 	jsr POKEYMAXCONF.FETCHCONFIGURATION
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 23
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 24
 
 	@printSTRING #CODEORIGIN+$002E
 	@printEOL
 
-; optimize OK (pokeymaxtest.pas), line = 24
+; optimize OK (pokeymaxtest.pas), line = 25
 
 	lda CONFIG.CAPABILITY
 	and #$40
-	jeq l_0338
+	jeq l_035A
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 25
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 26
 
 	@printSTRING #CODEORIGIN+$003B
 	@printEOL
-l_0338
+l_035A
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 27
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 28
 
 	@printSTRING #CODEORIGIN+$0067
 
-; optimize OK (pokeymaxtest.pas), line = 28
+; optimize OK (pokeymaxtest.pas), line = 29
 
 	lda CONFIG.CAPABILITY
 	and #$03
-	sta @CASETMP_0003
+	sta @CASETMP_0004
 	cmp #$00
-	jne l_0350
-@
-
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 29
-
-	@printSTRING #CODEORIGIN+$0070
-	@printEOL
-
-	jmp a_0003
-l_0350
-	cmp #$01
-	jne l_035C
+	jne l_0372
 @
 
 ; optimize FAIL ('@print', pokeymaxtest.pas), line = 30
 
-	@printSTRING #CODEORIGIN+$0080
+	@printSTRING #CODEORIGIN+$0070
 	@printEOL
 
-	jmp a_0003
-l_035C
-	cmp #$02
-	jne l_0368
+	jmp a_0004
+l_0372
+	cmp #$01
+	jne l_037E
 @
 
 ; optimize FAIL ('@print', pokeymaxtest.pas), line = 31
 
+	@printSTRING #CODEORIGIN+$0080
+	@printEOL
+
+	jmp a_0004
+l_037E
+	cmp #$02
+	jne l_038A
+@
+
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 32
+
 	@printSTRING #CODEORIGIN+$0097
 	@printEOL
 
-l_0368
-a_0003
+l_038A
+a_0004
 
-; optimize OK (pokeymaxtest.pas), line = 34
+; optimize OK (pokeymaxtest.pas), line = 35
 
 	lda CONFIG.CAPABILITY
 	and #$04
-	jeq l_0388
+	jeq l_03AA
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 36
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 37
 
 	@printSTRING #CODEORIGIN+$00B0
 	@printEOL
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 37
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 38
 
 	@printSTRING #CODEORIGIN+$00BF
 
-; optimize OK (pokeymaxtest.pas), line = 38
+; optimize OK (pokeymaxtest.pas), line = 39
 
 	lda CONFIG.SIDMODE
 	and #$01
-	sta @CASETMP_0004
+	sta @CASETMP_0005
 	cmp #$00
-	jne l_039E
+	jne l_03C0
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 39
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 40
 
 	@printSTRING #CODEORIGIN+$00C6
 
-	jmp a_0004
-l_039E
+	jmp a_0005
+l_03C0
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 41
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 42
 
 	@printSTRING #CODEORIGIN+$00DD
-a_0004
+a_0005
 
-; optimize OK (pokeymaxtest.pas), line = 43
+; optimize OK (pokeymaxtest.pas), line = 44
 
 	lda CONFIG.SIDMODE
 	and #$02
-	sta @CASETMP_0005
+	sta @CASETMP_0006
 	cmp #$00
-	jne l_03B8
+	jne l_03DA
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 44
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 45
 
 	@printSTRING #CODEORIGIN+$00E4
 	@printEOL
 
-	jmp a_0005
-l_03B8
+	jmp a_0006
+l_03DA
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 46
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 47
 
 	@printSTRING #CODEORIGIN+$00F5
 	@printEOL
-a_0005
+a_0006
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 48
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 49
 
 	@printSTRING #CODEORIGIN+$0103
 
-; optimize OK (pokeymaxtest.pas), line = 49
+; optimize OK (pokeymaxtest.pas), line = 50
 
 	lda CONFIG.SIDMODE
 	and #$10
-	sta @CASETMP_0006
+	sta @CASETMP_0007
 	cmp #$00
-	jne l_03D5
+	jne l_03F7
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 50
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 51
 
 	@printSTRING #CODEORIGIN+$00C6
 
-	jmp a_0006
-l_03D5
+	jmp a_0007
+l_03F7
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 52
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 53
 
 	@printSTRING #CODEORIGIN+$00DD
-a_0006
+a_0007
 
-; optimize OK (pokeymaxtest.pas), line = 54
+; optimize OK (pokeymaxtest.pas), line = 55
 
 	lda CONFIG.SIDMODE
 	and #$20
-	sta @CASETMP_0007
+	sta @CASETMP_0008
 	cmp #$00
-	jne l_03EF
+	jne l_0411
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 55
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 56
 
 	@printSTRING #CODEORIGIN+$00E4
 	@printEOL
 
-	jmp a_0007
-l_03EF
+	jmp a_0008
+l_0411
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 57
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 58
 
 	@printSTRING #CODEORIGIN+$00F5
 	@printEOL
-a_0007
-l_0388
+a_0008
+l_03AA
 
-; optimize OK (pokeymaxtest.pas), line = 61
+; optimize OK (pokeymaxtest.pas), line = 62
 
 	lda CONFIG.CAPABILITY
 	and #$08
-	jeq l_0412
+	jeq l_0434
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 63
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 64
 
 	@printSTRING #CODEORIGIN+$010A
 
-; optimize OK (pokeymaxtest.pas), line = 64
+; optimize OK (pokeymaxtest.pas), line = 65
 
 	lda CONFIG.PSGMODE
 	and #$03
-	sta @CASETMP_0008
+	sta @CASETMP_0009
 	cmp #$00
-	jne l_0425
-@
-
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 65
-
-	@printSTRING #CODEORIGIN+$011A
-
-	jmp a_0008
-l_0425
-	cmp #$01
-	jne l_0431
+	jne l_0447
 @
 
 ; optimize FAIL ('@print', pokeymaxtest.pas), line = 66
 
-	@printSTRING #CODEORIGIN+$0128
+	@printSTRING #CODEORIGIN+$011A
 
-	jmp a_0008
-l_0431
-	cmp #$02
-	jne l_043D
+	jmp a_0009
+l_0447
+	cmp #$01
+	jne l_0453
 @
 
 ; optimize FAIL ('@print', pokeymaxtest.pas), line = 67
 
+	@printSTRING #CODEORIGIN+$0128
+
+	jmp a_0009
+l_0453
+	cmp #$02
+	jne l_045F
+@
+
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 68
+
 	@printSTRING #CODEORIGIN+$0136
 
-l_043D
-a_0008
+l_045F
+a_0009
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 69
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 70
 
 	@printSTRING #CODEORIGIN+$0146
 	@printEOL
 
-; optimize OK (pokeymaxtest.pas), line = 70
+; optimize OK (pokeymaxtest.pas), line = 71
 
 	lda CONFIG.PSGMODE
 	and #$60
-	sta @CASETMP_0009
+	sta @CASETMP_000A
 	cmp #$00
-	jne l_0459
-@
-
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 71
-
-	@printSTRING #CODEORIGIN+$014D
-
-	jmp a_0009
-l_0459
-	cmp #$00
-	jne l_0465
+	jne l_047B
 @
 
 ; optimize FAIL ('@print', pokeymaxtest.pas), line = 72
 
+	@printSTRING #CODEORIGIN+$014D
+
+	jmp a_000A
+l_047B
+	cmp #$00
+	jne l_0487
+@
+
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 73
+
 	@printSTRING #CODEORIGIN+$015B
 
-l_0465
-a_0009
+l_0487
+a_000A
 
-; optimize OK (pokeymaxtest.pas), line = 74
+; optimize OK (pokeymaxtest.pas), line = 75
 
 	lda CONFIG.PSGMODE
 	and #$10
-	sta @CASETMP_000A
+	sta @CASETMP_000B
 	cmp #$10
-	jne l_047D
-@
-
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 75
-
-	@printSTRING #CODEORIGIN+$016C
-
-	jmp a_000A
-l_047D
-	cmp #$00
-	jne l_0489
+	jne l_049F
 @
 
 ; optimize FAIL ('@print', pokeymaxtest.pas), line = 76
 
+	@printSTRING #CODEORIGIN+$016C
+
+	jmp a_000B
+l_049F
+	cmp #$00
+	jne l_04AB
+@
+
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 77
+
 	@printSTRING #CODEORIGIN+$0180
 
-l_0489
-a_000A
+l_04AB
+a_000B
 
-; optimize OK (pokeymaxtest.pas), line = 78
+; optimize OK (pokeymaxtest.pas), line = 79
 
 	lda CONFIG.PSGMODE
 	and #$0C
-	sta @CASETMP_000B
+	sta @CASETMP_000C
 	cmp #$00
-	jne l_04A1
-@
-
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 79
-
-	@printSTRING #CODEORIGIN+$0194
-	@printEOL
-
-	jmp a_000B
-l_04A1
-	cmp #$00
-	jne l_04AD
+	jne l_04C3
 @
 
 ; optimize FAIL ('@print', pokeymaxtest.pas), line = 80
 
-	@printSTRING #CODEORIGIN+$01A1
+	@printSTRING #CODEORIGIN+$0194
 	@printEOL
 
-	jmp a_000B
-l_04AD
+	jmp a_000C
+l_04C3
 	cmp #$00
-	jne l_04B9
+	jne l_04CF
 @
 
 ; optimize FAIL ('@print', pokeymaxtest.pas), line = 81
 
-	@printSTRING #CODEORIGIN+$01B1
+	@printSTRING #CODEORIGIN+$01A1
 	@printEOL
 
-	jmp a_000B
-l_04B9
+	jmp a_000C
+l_04CF
 	cmp #$00
-	jne l_04C5
+	jne l_04DB
 @
 
 ; optimize FAIL ('@print', pokeymaxtest.pas), line = 82
 
+	@printSTRING #CODEORIGIN+$01B1
+	@printEOL
+
+	jmp a_000C
+l_04DB
+	cmp #$00
+	jne l_04E7
+@
+
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 83
+
 	@printSTRING #CODEORIGIN+$01C1
 	@printEOL
 
-l_04C5
-a_000B
-l_0412
+l_04E7
+a_000C
+l_0434
 
-; optimize OK (pokeymaxtest.pas), line = 85
+; optimize OK (pokeymaxtest.pas), line = 86
 
 	lda CONFIG.CAPABILITY
 	and #$10
-	jeq l_04E8
+	jeq l_050A
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 86
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 87
 
 	@printSTRING #CODEORIGIN+$01DA
 	@printEOL
-l_04E8
+l_050A
 
-; optimize OK (pokeymaxtest.pas), line = 87
+; optimize OK (pokeymaxtest.pas), line = 88
 
 	lda CONFIG.CAPABILITY
 	and #$20
-	jeq l_0504
+	jeq l_0526
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 88
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 89
 
 	@printSTRING #CODEORIGIN+$01EB
 	@printEOL
-l_0504
+l_0526
 
-; optimize FAIL ('WAIT4KEY', pokeymaxtest.pas), line = 90
+; optimize FAIL ('WAIT4KEY', pokeymaxtest.pas), line = 91
 
 	jsr WAIT4KEY
 
 ; ------------------------------------------------------------
 
-adr.CONFIG	= DATAORIGIN+$0012	; [15] RECORD
+adr.CONFIG	= DATAORIGIN+$0014	; [16] RECORD
 .var CONFIG	= adr.CONFIG .word
-CONFIG.MODE	= DATAORIGIN+$0012
-CONFIG.CAPABILITY	= DATAORIGIN+$0013
-CONFIG.POSTDIVIDE	= DATAORIGIN+$0014
-CONFIG.GTIAEN	= DATAORIGIN+$0015
-CONFIG.PSGMODE	= DATAORIGIN+$0016
-CONFIG.SIDMODE	= DATAORIGIN+$0017
-CONFIG.RESTRICT	= DATAORIGIN+$0018
-adr.CONFIG._RESERVED	= [DATAORIGIN+$0019] .array [3]
+CONFIG.MODE	= DATAORIGIN+$0014
+CONFIG.CAPABILITY	= DATAORIGIN+$0015
+CONFIG.POSTDIVIDE	= DATAORIGIN+$0016
+CONFIG.GTIAEN	= DATAORIGIN+$0017
+CONFIG.VERSION	= DATAORIGIN+$0018
+CONFIG.PSGMODE	= DATAORIGIN+$0019
+CONFIG.SIDMODE	= DATAORIGIN+$001A
+CONFIG.RESTRICT	= DATAORIGIN+$001B
+adr.CONFIG._RESERVED	= [DATAORIGIN+$001C] .array [3]
 .var CONFIG._RESERVED	= adr.CONFIG._RESERVED .word
-adr.CONFIG._FLASH	= [DATAORIGIN+$001C] .array [5]
+adr.CONFIG._FLASH	= [DATAORIGIN+$001F] .array [5]
 .var CONFIG._FLASH	= adr.CONFIG._FLASH .word
-adr.PMVER	= [DATAORIGIN+$0021] .array [9]
+adr.PMVER	= [DATAORIGIN+$0024] .array [9]
 .var PMVER	= adr.PMVER .word
 KEYB	= $02FC
-@CASETMP_0003	= DATAORIGIN+$002A
-@CASETMP_0004	= DATAORIGIN+$002B
-@CASETMP_0005	= DATAORIGIN+$002C
-@CASETMP_0006	= DATAORIGIN+$002D
-@CASETMP_0007	= DATAORIGIN+$002E
-@CASETMP_0008	= DATAORIGIN+$002F
-@CASETMP_0009	= DATAORIGIN+$0030
-@CASETMP_000A	= DATAORIGIN+$0031
-@CASETMP_000B	= DATAORIGIN+$0032
+@CASETMP_0004	= DATAORIGIN+$002D
+@CASETMP_0005	= DATAORIGIN+$002E
+@CASETMP_0006	= DATAORIGIN+$002F
+@CASETMP_0007	= DATAORIGIN+$0030
+@CASETMP_0008	= DATAORIGIN+$0031
+@CASETMP_0009	= DATAORIGIN+$0032
+@CASETMP_000A	= DATAORIGIN+$0033
+@CASETMP_000B	= DATAORIGIN+$0034
+@CASETMP_000C	= DATAORIGIN+$0035
 @exit
 
 @halt	ldx #$00
@@ -1193,7 +1245,7 @@ DATAORIGIN
 .by  $28 $00 $18 $00 $2D $0C
 
 VARINITSIZE	= *-DATAORIGIN
-VARDATASIZE	= 51
+VARDATASIZE	= 54
 
 PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 

@@ -317,7 +317,7 @@ Macro: UNITINITIALIZATION [Source: pokeymaxtest.a65]
    428
    429 2311			.local	DETECTPOKEYMAX					; FUNCTION
    430
-   431 				; optimize OK (POKEYMAXCONF), line = 407
+   431 				; optimize OK (POKEYMAXCONF), line = 30
    432
    433 2311			?volatile:
    434 2311 A0 01			ldy #1
@@ -339,14 +339,14 @@ Macro: UNITINITIALIZATION [Source: pokeymaxtest.a65]
    450 2320			.local	CONFIGMODE					; PROCEDURE
    451 2320 8D 45 26			sta STATE
    452
-   453 				; optimize OK (POKEYMAXCONF), line = 417
+   453 				; optimize OK (POKEYMAXCONF), line = 40
    454
    455 2323 8D 46 26			sta @CASETMP_0003
    456 2326 C9 01			cmp #$01
    457 2328 D0 08			jne l_0296
    458 				@
    459
-   460 				; optimize OK (POKEYMAXCONF), line = 418
+   460 				; optimize OK (POKEYMAXCONF), line = 41
    461
    462 232A A9 3F			lda #$3F
    463 232C 8D 0C D2			sta PMCCONFIG
@@ -357,7 +357,7 @@ Macro: UNITINITIALIZATION [Source: pokeymaxtest.a65]
    468 2334 D0 05			jne l_02A3
    469 				@
    470
-   471 				; optimize OK (POKEYMAXCONF), line = 419
+   471 				; optimize OK (POKEYMAXCONF), line = 42
    472
    473 2336 A9 00			lda #$00
    474 2338 8D 0C D2			sta PMCCONFIG
@@ -387,19 +387,19 @@ Macro: UNITINITIALIZATION [Source: pokeymaxtest.a65]
    498
    499 233C			.local	GETVERSION					; FUNCTION
    500
-   501 				; optimize OK (POKEYMAXCONF), line = 428
+   501 				; optimize OK (POKEYMAXCONF), line = 51
    502
    503 233C A9 01			lda #$01
    504 233E 20 20 23			jsr CONFIGMODE
    505
-   506 				; optimize OK (POKEYMAXCONF), line = 429
+   506 				; optimize OK (POKEYMAXCONF), line = 52
    507
    508 2341 AC 47 26 84 82 AC + 	mwy RESULT :bp2
    509 234B A0 00			ldy #$00
    510 234D A9 08			lda #$08
    511 234F 91 82			sta (:bp2),y
    512
-   513 				; optimize OK (POKEYMAXCONF), line = 430
+   513 				; optimize OK (POKEYMAXCONF), line = 53
    514
    515 2351 A9 01			lda #$01
    516 2353 8D 49 26			sta I
@@ -410,13 +410,13 @@ Macro: UNITINITIALIZATION [Source: pokeymaxtest.a65]
    521 2359 C9 09			cmp #$09
    522 235B B0 1E			jcs l_02CF
    523
-   524 				; optimize OK (POKEYMAXCONF), line = 432
+   524 				; optimize OK (POKEYMAXCONF), line = 55
    525
    526 235D AC 49 26			ldy I
    527 2360 88				dey
    528 2361 8C 14 D2			sty PMCVERSIONLOC
    529
-   530 				; optimize OK (POKEYMAXCONF), line = 433
+   530 				; optimize OK (POKEYMAXCONF), line = 56
    531
    532 2364			?volatile:
    533 2364 AC 47 26 84 82 AC + 	mwy RESULT :bp2
@@ -429,7 +429,7 @@ Macro: UNITINITIALIZATION [Source: pokeymaxtest.a65]
    540 2379 D0 DB			jne l_02C1
    541 237B			l_02CF
    542
-   543 				; optimize OK (POKEYMAXCONF), line = 435
+   543 				; optimize OK (POKEYMAXCONF), line = 58
    544
    545 237B A9 00			lda #$00
    546 237D 20 20 23			jsr CONFIGMODE
@@ -448,12 +448,12 @@ Macro: UNITINITIALIZATION [Source: pokeymaxtest.a65]
    559
    560 2381			.local	FETCHCONFIGURATION				; PROCEDURE
    561
-   562 				; optimize OK (POKEYMAXCONF), line = 440
+   562 				; optimize OK (POKEYMAXCONF), line = 63
    563
    564 2381 A9 01			lda #$01
    565 2383 20 20 23			jsr CONFIGMODE
    566
-   567 				; optimize OK (POKEYMAXCONF), line = 441
+   567 				; optimize OK (POKEYMAXCONF), line = 64
    568
    569 2386 AD AB 23			lda LIFECONFIG
    570 2389 85 88			sta SYSTEM.MOVE_0242.SOURCE
@@ -473,7 +473,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
      4 23A2 20 3D 22			jsr @move
    583 					.endl
    584
-   585 				; optimize OK (POKEYMAXCONF), line = 442
+   585 				; optimize OK (POKEYMAXCONF), line = 65
    586
    587 23A5 A9 00			lda #$00
    588 23A7 20 20 23			jsr CONFIGMODE
@@ -692,7 +692,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    782 240E 20 B0 22		 JSR @PRINTSTRING
    783 2411 20 A2 22			@printEOL
    784
-   785 				; optimize OK (pokeymaxtest.pas), line = 23
+   785 				; optimize OK (pokeymaxtest.pas), line = 24
    786
    787 2414 AD 2F 26			lda CONFIG
    788 2417 8D 4A 26			sta POKEYMAXCONF.FETCHCONFIGURATION._CONFIG
@@ -700,7 +700,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    790 241D 8D 4B 26			sta POKEYMAXCONF.FETCHCONFIGURATION._CONFIG+1
    791 2420 20 81 23			jsr POKEYMAXCONF.FETCHCONFIGURATION
    792
-   793 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 24
+   793 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 26
    794
    795 					@printSTRING #CODEORIGIN+$002E
    795 				 LDY> CODEORIGIN+$002E\ LDA< CODEORIGIN+$002E\ JSR @PRINTSTRING
@@ -709,13 +709,13 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    795 2427 20 B0 22		 JSR @PRINTSTRING
    796 242A 20 A2 22			@printEOL
    797
-   798 				; optimize OK (pokeymaxtest.pas), line = 25
+   798 				; optimize OK (pokeymaxtest.pas), line = 27
    799
    800 242D AD 4D 26			lda CONFIG.CAPABILITY
    801 2430 29 40			and #$40
    802 2432 F0 0A			jeq l_035A
    803
-   804 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 26
+   804 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 28
    805
    806 					@printSTRING #CODEORIGIN+$003B
    806 				 LDY> CODEORIGIN+$003B\ LDA< CODEORIGIN+$003B\ JSR @PRINTSTRING
@@ -725,7 +725,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    807 243B 20 A2 22			@printEOL
    808 243E			l_035A
    809
-   810 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 28
+   810 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 30
    811
    812 					@printSTRING #CODEORIGIN+$0067
    812 				 LDY> CODEORIGIN+$0067\ LDA< CODEORIGIN+$0067\ JSR @PRINTSTRING
@@ -733,7 +733,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    812 2440 A9 67		 LDA< CODEORIGIN+$0067
    812 2442 20 B0 22		 JSR @PRINTSTRING
    813
-   814 				; optimize OK (pokeymaxtest.pas), line = 29
+   814 				; optimize OK (pokeymaxtest.pas), line = 31
    815
    816 2445 AD 4D 26			lda CONFIG.CAPABILITY
    817 2448 29 03			and #$03
@@ -742,7 +742,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    820 244F D0 0D			jne l_0372
    821 				@
    822
-   823 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 30
+   823 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 32
    824
    825 					@printSTRING #CODEORIGIN+$0070
    825 				 LDY> CODEORIGIN+$0070\ LDA< CODEORIGIN+$0070\ JSR @PRINTSTRING
@@ -757,7 +757,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    831 2460 D0 0D			jne l_037E
    832 				@
    833
-   834 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 31
+   834 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 33
    835
    836 					@printSTRING #CODEORIGIN+$0080
    836 				 LDY> CODEORIGIN+$0080\ LDA< CODEORIGIN+$0080\ JSR @PRINTSTRING
@@ -772,7 +772,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    842 2471 D0 0A			jne l_038A
    843 				@
    844
-   845 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 32
+   845 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 34
    846
    847 					@printSTRING #CODEORIGIN+$0097
    847 				 LDY> CODEORIGIN+$0097\ LDA< CODEORIGIN+$0097\ JSR @PRINTSTRING
@@ -784,13 +784,13 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    850 247D			l_038A
    851 247D			a_0004
    852
-   853 				; optimize OK (pokeymaxtest.pas), line = 35
+   853 				; optimize OK (pokeymaxtest.pas), line = 37
    854
    855 247D AD 4D 26			lda CONFIG.CAPABILITY
    856 2480 29 04			and #$04
    857 2482 D0 03 4C 1F 25		jeq l_03AA
    858
-   859 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 37
+   859 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 39
    860
    861 					@printSTRING #CODEORIGIN+$00B0
    861 				 LDY> CODEORIGIN+$00B0\ LDA< CODEORIGIN+$00B0\ JSR @PRINTSTRING
@@ -799,7 +799,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    861 248B 20 B0 22		 JSR @PRINTSTRING
    862 248E 20 A2 22			@printEOL
    863
-   864 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 38
+   864 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 40
    865
    866 					@printSTRING #CODEORIGIN+$00BF
    866 				 LDY> CODEORIGIN+$00BF\ LDA< CODEORIGIN+$00BF\ JSR @PRINTSTRING
@@ -807,7 +807,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    866 2493 A9 BF		 LDA< CODEORIGIN+$00BF
    866 2495 20 B0 22		 JSR @PRINTSTRING
    867
-   868 				; optimize OK (pokeymaxtest.pas), line = 39
+   868 				; optimize OK (pokeymaxtest.pas), line = 41
    869
    870 2498 AD 52 26			lda CONFIG.SIDMODE
    871 249B 29 01			and #$01
@@ -816,7 +816,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    874 24A2 D0 0A			jne l_03C0
    875 				@
    876
-   877 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 40
+   877 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 42
    878
    879 					@printSTRING #CODEORIGIN+$00C6
    879 				 LDY> CODEORIGIN+$00C6\ LDA< CODEORIGIN+$00C6\ JSR @PRINTSTRING
@@ -827,7 +827,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    881 24AB 4C B5 24			jmp a_0005
    882 24AE			l_03C0
    883
-   884 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 42
+   884 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 44
    885
    886 					@printSTRING #CODEORIGIN+$00DD
    886 				 LDY> CODEORIGIN+$00DD\ LDA< CODEORIGIN+$00DD\ JSR @PRINTSTRING
@@ -836,7 +836,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    886 24B2 20 B0 22		 JSR @PRINTSTRING
    887 24B5			a_0005
    888
-   889 				; optimize OK (pokeymaxtest.pas), line = 44
+   889 				; optimize OK (pokeymaxtest.pas), line = 46
    890
    891 24B5 AD 52 26			lda CONFIG.SIDMODE
    892 24B8 29 02			and #$02
@@ -845,7 +845,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    895 24BF D0 0D			jne l_03DA
    896 				@
    897
-   898 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 45
+   898 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 47
    899
    900 					@printSTRING #CODEORIGIN+$00E4
    900 				 LDY> CODEORIGIN+$00E4\ LDA< CODEORIGIN+$00E4\ JSR @PRINTSTRING
@@ -857,7 +857,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    903 24CB 4C D8 24			jmp a_0006
    904 24CE			l_03DA
    905
-   906 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 47
+   906 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 49
    907
    908 					@printSTRING #CODEORIGIN+$00F5
    908 				 LDY> CODEORIGIN+$00F5\ LDA< CODEORIGIN+$00F5\ JSR @PRINTSTRING
@@ -867,7 +867,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    909 24D5 20 A2 22			@printEOL
    910 24D8			a_0006
    911
-   912 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 49
+   912 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 51
    913
    914 					@printSTRING #CODEORIGIN+$0103
    914 				 LDY> CODEORIGIN+$0103\ LDA< CODEORIGIN+$0103\ JSR @PRINTSTRING
@@ -875,7 +875,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    914 24DA A9 03		 LDA< CODEORIGIN+$0103
    914 24DC 20 B0 22		 JSR @PRINTSTRING
    915
-   916 				; optimize OK (pokeymaxtest.pas), line = 50
+   916 				; optimize OK (pokeymaxtest.pas), line = 52
    917
    918 24DF AD 52 26			lda CONFIG.SIDMODE
    919 24E2 29 10			and #$10
@@ -884,7 +884,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    922 24E9 D0 0A			jne l_03F7
    923 				@
    924
-   925 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 51
+   925 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 53
    926
    927 					@printSTRING #CODEORIGIN+$00C6
    927 				 LDY> CODEORIGIN+$00C6\ LDA< CODEORIGIN+$00C6\ JSR @PRINTSTRING
@@ -895,7 +895,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    929 24F2 4C FC 24			jmp a_0007
    930 24F5			l_03F7
    931
-   932 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 53
+   932 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 55
    933
    934 					@printSTRING #CODEORIGIN+$00DD
    934 				 LDY> CODEORIGIN+$00DD\ LDA< CODEORIGIN+$00DD\ JSR @PRINTSTRING
@@ -904,7 +904,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    934 24F9 20 B0 22		 JSR @PRINTSTRING
    935 24FC			a_0007
    936
-   937 				; optimize OK (pokeymaxtest.pas), line = 55
+   937 				; optimize OK (pokeymaxtest.pas), line = 57
    938
    939 24FC AD 52 26			lda CONFIG.SIDMODE
    940 24FF 29 20			and #$20
@@ -913,7 +913,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    943 2506 D0 0D			jne l_0411
    944 				@
    945
-   946 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 56
+   946 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 58
    947
    948 					@printSTRING #CODEORIGIN+$00E4
    948 				 LDY> CODEORIGIN+$00E4\ LDA< CODEORIGIN+$00E4\ JSR @PRINTSTRING
@@ -925,7 +925,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    951 2512 4C 1F 25			jmp a_0008
    952 2515			l_0411
    953
-   954 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 58
+   954 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 60
    955
    956 					@printSTRING #CODEORIGIN+$00F5
    956 				 LDY> CODEORIGIN+$00F5\ LDA< CODEORIGIN+$00F5\ JSR @PRINTSTRING
@@ -936,13 +936,13 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    958 251F			a_0008
    959 251F			l_03AA
    960
-   961 				; optimize OK (pokeymaxtest.pas), line = 62
+   961 				; optimize OK (pokeymaxtest.pas), line = 64
    962
    963 251F AD 4D 26			lda CONFIG.CAPABILITY
    964 2522 29 08			and #$08
    965 2524 D0 03 4C F4 25		jeq l_0434
    966
-   967 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 64
+   967 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 66
    968
    969 					@printSTRING #CODEORIGIN+$010A
    969 				 LDY> CODEORIGIN+$010A\ LDA< CODEORIGIN+$010A\ JSR @PRINTSTRING
@@ -950,7 +950,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    969 252B A9 0A		 LDA< CODEORIGIN+$010A
    969 252D 20 B0 22		 JSR @PRINTSTRING
    970
-   971 				; optimize OK (pokeymaxtest.pas), line = 65
+   971 				; optimize OK (pokeymaxtest.pas), line = 67
    972
    973 2530 AD 51 26			lda CONFIG.PSGMODE
    974 2533 29 03			and #$03
@@ -959,7 +959,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    977 253A D0 0A			jne l_0447
    978 				@
    979
-   980 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 66
+   980 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 68
    981
    982 					@printSTRING #CODEORIGIN+$011A
    982 				 LDY> CODEORIGIN+$011A\ LDA< CODEORIGIN+$011A\ JSR @PRINTSTRING
@@ -973,7 +973,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    987 2548 D0 0A			jne l_0453
    988 				@
    989
-   990 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 67
+   990 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 69
    991
    992 					@printSTRING #CODEORIGIN+$0128
    992 				 LDY> CODEORIGIN+$0128\ LDA< CODEORIGIN+$0128\ JSR @PRINTSTRING
@@ -987,7 +987,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
    997 2556 D0 07			jne l_045F
    998 				@
    999
-  1000 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 68
+  1000 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 70
   1001
   1002 					@printSTRING #CODEORIGIN+$0136
   1002 				 LDY> CODEORIGIN+$0136\ LDA< CODEORIGIN+$0136\ JSR @PRINTSTRING
@@ -998,7 +998,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
   1004 255F			l_045F
   1005 255F			a_0009
   1006
-  1007 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 70
+  1007 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 72
   1008
   1009 					@printSTRING #CODEORIGIN+$0146
   1009 				 LDY> CODEORIGIN+$0146\ LDA< CODEORIGIN+$0146\ JSR @PRINTSTRING
@@ -1007,7 +1007,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
   1009 2563 20 B0 22		 JSR @PRINTSTRING
   1010 2566 20 A2 22			@printEOL
   1011
-  1012 				; optimize OK (pokeymaxtest.pas), line = 71
+  1012 				; optimize OK (pokeymaxtest.pas), line = 73
   1013
   1014 2569 AD 51 26			lda CONFIG.PSGMODE
   1015 256C 29 60			and #$60
@@ -1016,7 +1016,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
   1018 2573 D0 0A			jne l_047B
   1019 				@
   1020
-  1021 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 72
+  1021 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 74
   1022
   1023 					@printSTRING #CODEORIGIN+$014D
   1023 				 LDY> CODEORIGIN+$014D\ LDA< CODEORIGIN+$014D\ JSR @PRINTSTRING
@@ -1030,7 +1030,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
   1028 2581 D0 07			jne l_0487
   1029 				@
   1030
-  1031 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 73
+  1031 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 75
   1032
   1033 					@printSTRING #CODEORIGIN+$015B
   1033 				 LDY> CODEORIGIN+$015B\ LDA< CODEORIGIN+$015B\ JSR @PRINTSTRING
@@ -1041,7 +1041,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
   1035 258A			l_0487
   1036 258A			a_000A
   1037
-  1038 				; optimize OK (pokeymaxtest.pas), line = 75
+  1038 				; optimize OK (pokeymaxtest.pas), line = 77
   1039
   1040 258A AD 51 26			lda CONFIG.PSGMODE
   1041 258D 29 10			and #$10
@@ -1050,7 +1050,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
   1044 2594 D0 0A			jne l_049F
   1045 				@
   1046
-  1047 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 76
+  1047 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 78
   1048
   1049 					@printSTRING #CODEORIGIN+$016C
   1049 				 LDY> CODEORIGIN+$016C\ LDA< CODEORIGIN+$016C\ JSR @PRINTSTRING
@@ -1064,7 +1064,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
   1054 25A2 D0 07			jne l_04AB
   1055 				@
   1056
-  1057 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 77
+  1057 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 79
   1058
   1059 					@printSTRING #CODEORIGIN+$0180
   1059 				 LDY> CODEORIGIN+$0180\ LDA< CODEORIGIN+$0180\ JSR @PRINTSTRING
@@ -1075,7 +1075,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
   1061 25AB			l_04AB
   1062 25AB			a_000B
   1063
-  1064 				; optimize OK (pokeymaxtest.pas), line = 79
+  1064 				; optimize OK (pokeymaxtest.pas), line = 81
   1065
   1066 25AB AD 51 26			lda CONFIG.PSGMODE
   1067 25AE 29 0C			and #$0C
@@ -1084,7 +1084,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
   1070 25B5 D0 0D			jne l_04C3
   1071 				@
   1072
-  1073 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 80
+  1073 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 82
   1074
   1075 					@printSTRING #CODEORIGIN+$0194
   1075 				 LDY> CODEORIGIN+$0194\ LDA< CODEORIGIN+$0194\ JSR @PRINTSTRING
@@ -1099,7 +1099,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
   1081 25C6 D0 0D			jne l_04CF
   1082 				@
   1083
-  1084 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 81
+  1084 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 83
   1085
   1086 					@printSTRING #CODEORIGIN+$01A1
   1086 				 LDY> CODEORIGIN+$01A1\ LDA< CODEORIGIN+$01A1\ JSR @PRINTSTRING
@@ -1114,7 +1114,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
   1092 25D7 D0 0D			jne l_04DB
   1093 				@
   1094
-  1095 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 82
+  1095 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 84
   1096
   1097 					@printSTRING #CODEORIGIN+$01B1
   1097 				 LDY> CODEORIGIN+$01B1\ LDA< CODEORIGIN+$01B1\ JSR @PRINTSTRING
@@ -1129,7 +1129,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
   1103 25E8 D0 0A			jne l_04E7
   1104 				@
   1105
-  1106 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 83
+  1106 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 85
   1107
   1108 					@printSTRING #CODEORIGIN+$01C1
   1108 				 LDY> CODEORIGIN+$01C1\ LDA< CODEORIGIN+$01C1\ JSR @PRINTSTRING
@@ -1142,13 +1142,13 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
   1112 25F4			a_000C
   1113 25F4			l_0434
   1114
-  1115 				; optimize OK (pokeymaxtest.pas), line = 86
+  1115 				; optimize OK (pokeymaxtest.pas), line = 88
   1116
   1117 25F4 AD 4D 26			lda CONFIG.CAPABILITY
   1118 25F7 29 10			and #$10
   1119 25F9 F0 0A			jeq l_050A
   1120
-  1121 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 87
+  1121 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 89
   1122
   1123 					@printSTRING #CODEORIGIN+$01DA
   1123 				 LDY> CODEORIGIN+$01DA\ LDA< CODEORIGIN+$01DA\ JSR @PRINTSTRING
@@ -1158,13 +1158,13 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
   1124 2602 20 A2 22			@printEOL
   1125 2605			l_050A
   1126
-  1127 				; optimize OK (pokeymaxtest.pas), line = 88
+  1127 				; optimize OK (pokeymaxtest.pas), line = 90
   1128
   1129 2605 AD 4D 26			lda CONFIG.CAPABILITY
   1130 2608 29 20			and #$20
   1131 260A F0 0A			jeq l_0526
   1132
-  1133 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 89
+  1133 				; optimize FAIL ('@print', pokeymaxtest.pas), line = 91
   1134
   1135 					@printSTRING #CODEORIGIN+$01EB
   1135 				 LDY> CODEORIGIN+$01EB\ LDA< CODEORIGIN+$01EB\ JSR @PRINTSTRING
@@ -1174,7 +1174,7 @@ Macro: MAIN.SYSTEM.MOVE_0242.M@INLINE [Source: pokeymaxtest.a65]
   1136 2613 20 A2 22			@printEOL
   1137 2616			l_0526
   1138
-  1139 				; optimize FAIL ('WAIT4KEY', pokeymaxtest.pas), line = 91
+  1139 				; optimize FAIL ('WAIT4KEY', pokeymaxtest.pas), line = 93
   1140
   1141 2616 20 B1 23			jsr WAIT4KEY
   1142

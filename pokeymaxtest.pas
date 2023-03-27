@@ -1,7 +1,7 @@
 uses CRT,POKEYMAXconf;
 
 var
-  config:TConfig;
+  config:TPokeyMaxConfig;
   PMVER:String[8];
   keyb:byte absolute 764;
 
@@ -20,7 +20,9 @@ begin
 
   PMVER:=GetVersion;
   writeLn('POKEYMax ver: ',PMVER);
+
   fetchConfiguration(config);
+
   writeLn('Capability:');
   if config.capability and pmc_FLASH<>0 then
     writeLn('Possible to flash firmware & configuration');

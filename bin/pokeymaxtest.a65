@@ -428,7 +428,7 @@ BLINK	= $80
 
 .local	DETECTPOKEYMAX					; FUNCTION
 
-; optimize OK (POKEYMAXCONF), line = 407
+; optimize OK (POKEYMAXCONF), line = 30
 
 ?volatile:
 	ldy #1
@@ -450,14 +450,14 @@ RESULT	= DATAORIGIN+$000C
 .local	CONFIGMODE					; PROCEDURE
 	sta STATE
 
-; optimize OK (POKEYMAXCONF), line = 417
+; optimize OK (POKEYMAXCONF), line = 40
 
 	sta @CASETMP_0003
 	cmp #$01
 	jne l_0296
 @
 
-; optimize OK (POKEYMAXCONF), line = 418
+; optimize OK (POKEYMAXCONF), line = 41
 
 	lda #$3F
 	sta PMCCONFIG
@@ -468,7 +468,7 @@ l_0296
 	jne l_02A3
 @
 
-; optimize OK (POKEYMAXCONF), line = 419
+; optimize OK (POKEYMAXCONF), line = 42
 
 	lda #$00
 	sta PMCCONFIG
@@ -498,19 +498,19 @@ STATE	= DATAORIGIN+$000D
 
 .local	GETVERSION					; FUNCTION
 
-; optimize OK (POKEYMAXCONF), line = 428
+; optimize OK (POKEYMAXCONF), line = 51
 
 	lda #$01
 	jsr CONFIGMODE
 
-; optimize OK (POKEYMAXCONF), line = 429
+; optimize OK (POKEYMAXCONF), line = 52
 
 	mwy RESULT :bp2
 	ldy #$00
 	lda #$08
 	sta (:bp2),y
 
-; optimize OK (POKEYMAXCONF), line = 430
+; optimize OK (POKEYMAXCONF), line = 53
 
 	lda #$01
 	sta I
@@ -521,13 +521,13 @@ l_02C1
 	cmp #$09
 	jcs l_02CF
 
-; optimize OK (POKEYMAXCONF), line = 432
+; optimize OK (POKEYMAXCONF), line = 55
 
 	ldy I
 	dey
 	sty PMCVERSIONLOC
 
-; optimize OK (POKEYMAXCONF), line = 433
+; optimize OK (POKEYMAXCONF), line = 56
 
 ?volatile:
 	mwy RESULT :bp2
@@ -540,7 +540,7 @@ l_02C1
 	jne l_02C1
 l_02CF
 
-; optimize OK (POKEYMAXCONF), line = 435
+; optimize OK (POKEYMAXCONF), line = 58
 
 	lda #$00
 	jsr CONFIGMODE
@@ -559,12 +559,12 @@ I	= DATAORIGIN+$0011
 
 .local	FETCHCONFIGURATION				; PROCEDURE
 
-; optimize OK (POKEYMAXCONF), line = 440
+; optimize OK (POKEYMAXCONF), line = 63
 
 	lda #$01
 	jsr CONFIGMODE
 
-; optimize OK (POKEYMAXCONF), line = 441
+; optimize OK (POKEYMAXCONF), line = 64
 
 	lda LIFECONFIG
 	sta SYSTEM.MOVE_0242.SOURCE
@@ -582,7 +582,7 @@ I	= DATAORIGIN+$0011
 	m@INLINE
 	.endl
 
-; optimize OK (POKEYMAXCONF), line = 442
+; optimize OK (POKEYMAXCONF), line = 65
 
 	lda #$00
 	jsr CONFIGMODE
@@ -782,7 +782,7 @@ l_032B
 	@printSTRING PMVER
 	@printEOL
 
-; optimize OK (pokeymaxtest.pas), line = 23
+; optimize OK (pokeymaxtest.pas), line = 24
 
 	lda CONFIG
 	sta POKEYMAXCONF.FETCHCONFIGURATION._CONFIG
@@ -790,28 +790,28 @@ l_032B
 	sta POKEYMAXCONF.FETCHCONFIGURATION._CONFIG+1
 	jsr POKEYMAXCONF.FETCHCONFIGURATION
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 24
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 26
 
 	@printSTRING #CODEORIGIN+$002E
 	@printEOL
 
-; optimize OK (pokeymaxtest.pas), line = 25
+; optimize OK (pokeymaxtest.pas), line = 27
 
 	lda CONFIG.CAPABILITY
 	and #$40
 	jeq l_035A
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 26
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 28
 
 	@printSTRING #CODEORIGIN+$003B
 	@printEOL
 l_035A
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 28
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 30
 
 	@printSTRING #CODEORIGIN+$0067
 
-; optimize OK (pokeymaxtest.pas), line = 29
+; optimize OK (pokeymaxtest.pas), line = 31
 
 	lda CONFIG.CAPABILITY
 	and #$03
@@ -820,7 +820,7 @@ l_035A
 	jne l_0372
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 30
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 32
 
 	@printSTRING #CODEORIGIN+$0070
 	@printEOL
@@ -831,7 +831,7 @@ l_0372
 	jne l_037E
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 31
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 33
 
 	@printSTRING #CODEORIGIN+$0080
 	@printEOL
@@ -842,7 +842,7 @@ l_037E
 	jne l_038A
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 32
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 34
 
 	@printSTRING #CODEORIGIN+$0097
 	@printEOL
@@ -850,22 +850,22 @@ l_037E
 l_038A
 a_0004
 
-; optimize OK (pokeymaxtest.pas), line = 35
+; optimize OK (pokeymaxtest.pas), line = 37
 
 	lda CONFIG.CAPABILITY
 	and #$04
 	jeq l_03AA
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 37
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 39
 
 	@printSTRING #CODEORIGIN+$00B0
 	@printEOL
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 38
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 40
 
 	@printSTRING #CODEORIGIN+$00BF
 
-; optimize OK (pokeymaxtest.pas), line = 39
+; optimize OK (pokeymaxtest.pas), line = 41
 
 	lda CONFIG.SIDMODE
 	and #$01
@@ -874,19 +874,19 @@ a_0004
 	jne l_03C0
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 40
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 42
 
 	@printSTRING #CODEORIGIN+$00C6
 
 	jmp a_0005
 l_03C0
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 42
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 44
 
 	@printSTRING #CODEORIGIN+$00DD
 a_0005
 
-; optimize OK (pokeymaxtest.pas), line = 44
+; optimize OK (pokeymaxtest.pas), line = 46
 
 	lda CONFIG.SIDMODE
 	and #$02
@@ -895,7 +895,7 @@ a_0005
 	jne l_03DA
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 45
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 47
 
 	@printSTRING #CODEORIGIN+$00E4
 	@printEOL
@@ -903,17 +903,17 @@ a_0005
 	jmp a_0006
 l_03DA
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 47
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 49
 
 	@printSTRING #CODEORIGIN+$00F5
 	@printEOL
 a_0006
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 49
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 51
 
 	@printSTRING #CODEORIGIN+$0103
 
-; optimize OK (pokeymaxtest.pas), line = 50
+; optimize OK (pokeymaxtest.pas), line = 52
 
 	lda CONFIG.SIDMODE
 	and #$10
@@ -922,19 +922,19 @@ a_0006
 	jne l_03F7
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 51
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 53
 
 	@printSTRING #CODEORIGIN+$00C6
 
 	jmp a_0007
 l_03F7
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 53
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 55
 
 	@printSTRING #CODEORIGIN+$00DD
 a_0007
 
-; optimize OK (pokeymaxtest.pas), line = 55
+; optimize OK (pokeymaxtest.pas), line = 57
 
 	lda CONFIG.SIDMODE
 	and #$20
@@ -943,7 +943,7 @@ a_0007
 	jne l_0411
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 56
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 58
 
 	@printSTRING #CODEORIGIN+$00E4
 	@printEOL
@@ -951,24 +951,24 @@ a_0007
 	jmp a_0008
 l_0411
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 58
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 60
 
 	@printSTRING #CODEORIGIN+$00F5
 	@printEOL
 a_0008
 l_03AA
 
-; optimize OK (pokeymaxtest.pas), line = 62
+; optimize OK (pokeymaxtest.pas), line = 64
 
 	lda CONFIG.CAPABILITY
 	and #$08
 	jeq l_0434
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 64
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 66
 
 	@printSTRING #CODEORIGIN+$010A
 
-; optimize OK (pokeymaxtest.pas), line = 65
+; optimize OK (pokeymaxtest.pas), line = 67
 
 	lda CONFIG.PSGMODE
 	and #$03
@@ -977,7 +977,7 @@ l_03AA
 	jne l_0447
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 66
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 68
 
 	@printSTRING #CODEORIGIN+$011A
 
@@ -987,7 +987,7 @@ l_0447
 	jne l_0453
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 67
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 69
 
 	@printSTRING #CODEORIGIN+$0128
 
@@ -997,19 +997,19 @@ l_0453
 	jne l_045F
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 68
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 70
 
 	@printSTRING #CODEORIGIN+$0136
 
 l_045F
 a_0009
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 70
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 72
 
 	@printSTRING #CODEORIGIN+$0146
 	@printEOL
 
-; optimize OK (pokeymaxtest.pas), line = 71
+; optimize OK (pokeymaxtest.pas), line = 73
 
 	lda CONFIG.PSGMODE
 	and #$60
@@ -1018,7 +1018,7 @@ a_0009
 	jne l_047B
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 72
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 74
 
 	@printSTRING #CODEORIGIN+$014D
 
@@ -1028,14 +1028,14 @@ l_047B
 	jne l_0487
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 73
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 75
 
 	@printSTRING #CODEORIGIN+$015B
 
 l_0487
 a_000A
 
-; optimize OK (pokeymaxtest.pas), line = 75
+; optimize OK (pokeymaxtest.pas), line = 77
 
 	lda CONFIG.PSGMODE
 	and #$10
@@ -1044,7 +1044,7 @@ a_000A
 	jne l_049F
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 76
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 78
 
 	@printSTRING #CODEORIGIN+$016C
 
@@ -1054,14 +1054,14 @@ l_049F
 	jne l_04AB
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 77
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 79
 
 	@printSTRING #CODEORIGIN+$0180
 
 l_04AB
 a_000B
 
-; optimize OK (pokeymaxtest.pas), line = 79
+; optimize OK (pokeymaxtest.pas), line = 81
 
 	lda CONFIG.PSGMODE
 	and #$0C
@@ -1070,7 +1070,7 @@ a_000B
 	jne l_04C3
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 80
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 82
 
 	@printSTRING #CODEORIGIN+$0194
 	@printEOL
@@ -1081,7 +1081,7 @@ l_04C3
 	jne l_04CF
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 81
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 83
 
 	@printSTRING #CODEORIGIN+$01A1
 	@printEOL
@@ -1092,7 +1092,7 @@ l_04CF
 	jne l_04DB
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 82
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 84
 
 	@printSTRING #CODEORIGIN+$01B1
 	@printEOL
@@ -1103,7 +1103,7 @@ l_04DB
 	jne l_04E7
 @
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 83
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 85
 
 	@printSTRING #CODEORIGIN+$01C1
 	@printEOL
@@ -1112,31 +1112,31 @@ l_04E7
 a_000C
 l_0434
 
-; optimize OK (pokeymaxtest.pas), line = 86
+; optimize OK (pokeymaxtest.pas), line = 88
 
 	lda CONFIG.CAPABILITY
 	and #$10
 	jeq l_050A
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 87
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 89
 
 	@printSTRING #CODEORIGIN+$01DA
 	@printEOL
 l_050A
 
-; optimize OK (pokeymaxtest.pas), line = 88
+; optimize OK (pokeymaxtest.pas), line = 90
 
 	lda CONFIG.CAPABILITY
 	and #$20
 	jeq l_0526
 
-; optimize FAIL ('@print', pokeymaxtest.pas), line = 89
+; optimize FAIL ('@print', pokeymaxtest.pas), line = 91
 
 	@printSTRING #CODEORIGIN+$01EB
 	@printEOL
 l_0526
 
-; optimize FAIL ('WAIT4KEY', pokeymaxtest.pas), line = 91
+; optimize FAIL ('WAIT4KEY', pokeymaxtest.pas), line = 93
 
 	jsr WAIT4KEY
 
